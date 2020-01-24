@@ -38,14 +38,22 @@ if (cisst_FOUND)
   # sawIntuitiveResearchKit has been compiled within cisst, we should
   # find it automatically
   find_package(sawIntuitiveResearchKit 1.7.1 REQUIRED)
-
+  find_package(sawControllers 1.7.1 REQUIRED)
+  find_package(sawConstraintController REQUIRED)
+  find_package(cisstICP REQUIRED)
 
   include_directories (
     ${CMAKE_BINARY_DIR}
-    ${sawIntuitiveResearchKit_INCLUDE_DIR})
+    ${sawIntuitiveResearchKit_INCLUDE_DIR}
+    ${sawControllers_INCLUDE_DIR}
+    ${sawConstraintController_INCLUDE_DIR}
+    ${cisstICP_INCLUDE_DIR})
 
   link_directories (
-    ${sawIntuitiveResearchKit_LIBRARY_DIR})
+    ${sawIntuitiveResearchKit_LIBRARY_DIR}
+    ${sawControllers_LIBRARY_DIR}
+    ${sawConstraintController_LIBRARY_DIR}
+    ${cisstICP_LIBRARY_DIR})
 
   set (USAblation_INCLUDE_DIR
         "${USAblation_SOURCE_DIR}/include")
@@ -54,14 +62,20 @@ if (cisst_FOUND)
 
   add_library (USAblation
               "include/mtsDerivedTeleOperationPSM.h"
-              "code/mtsDerivedTeleOperationPSM.cpp")
+              "code/mtsDerivedTeleOperationPSM.cpp"
+              "include/mtsDerivedIntuitiveResearchKitPSM.h"
+              "code/mtsDerivedIntuitiveResearchKitPSM.cpp"
+              )
 
   cisst_target_link_libraries (USAblation
                               ${REQUIRED_CISST_LIBRARIES})
 
   # link against non cisst libraries and cisst components
   target_link_libraries (USAblation
-                        ${sawIntuitiveResearchKit_LIBRARIES})
+                        ${sawIntuitiveResearchKit_LIBRARIES}
+                        ${sawControllers_LIBRARIES}
+                        ${sawConstraintController_LIBRARIES}
+                        ${cisstICP_LIBRARIES})
 
 
 endif (cisst_FOUND)
