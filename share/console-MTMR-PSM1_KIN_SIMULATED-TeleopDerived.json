@@ -1,0 +1,62 @@
+/* -*- Mode: Javascript; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+{
+    "component-manager": {
+        "components":
+        [
+            // this is to use our derived Teleop PSM, the name must
+            // match the name the console would use,
+            // i.e. <master>-<slave>
+            {
+                "shared-library": "sawIntuitiveResearchKitDerivedTeleOperationPSM",
+                "class-name": "mtsDerivedTeleOperationPSM",
+                "constructor-arg": {
+                    "Name": "MTMR-PSM1",
+                    "Period": 0.001
+                }
+            }
+        ]
+    }
+    ,
+    "io":
+    {
+        "footpedals": "io/sawRobotIO1394-MTMR-foot-pedals.xml"
+    }
+    ,
+    "arms":
+    [
+        {
+            "name": "MTMR",
+            "type": "MTM",
+            "serial": "79526",
+            "base-frame": {
+                "reference-frame": "HRSV",
+                "transform": [[ -1.0,  0.0,          0.0,          0.180],
+                              [  0.0,  0.866025404,  0.5,          0.400],
+                              [  0.0,  0.5,         -0.866025404,  0.475],
+                              [  0.0,  0.0,          0.0,          1.0]]
+            }
+        }
+        ,
+        {
+            "name": "PSM1",
+            "type": "PSM",
+            "simulation": "KINEMATIC",
+            "pid": "sawControllersPID-PSM.xml",
+            "kinematic": "psm-large-needle-driver.json"
+        }
+    ]
+    ,
+    "psm-teleops":
+    [
+        {
+            // this is where we tell the console to use our manually
+            // loaded teleop, using "type"
+            "type": "TELEOP_PSM_DERIVED",
+            "master": "MTMR",
+            "slave": "PSM1",
+            "rotation" : [[ 0.0000, -1.0000,  0.0000],
+                          [ 1.0000,  0.0000,  0.0000],
+                          [ 0.0000,  0.0000,  1.0000]]
+        }
+    ]
+}

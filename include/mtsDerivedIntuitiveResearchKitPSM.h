@@ -33,13 +33,16 @@ http://www.cisst.org/cisst/license.txt.
 class mtsDerivedIntuitiveResearchKitPSM : public mtsIntuitiveResearchKitPSM
 {
     CMN_DECLARE_SERVICES(CMN_DYNAMIC_CREATION_ONEARG, CMN_LOG_ALLOW_DEFAULT);
+
 public:
     typedef mtsIntuitiveResearchKitPSM BaseType;
 
     mtsDerivedIntuitiveResearchKitPSM(const std::string & componentName, const double periodInSeconds);
+    mtsDerivedIntuitiveResearchKitPSM(const mtsTaskPeriodicConstructorArg & arg);
+
     ~mtsDerivedIntuitiveResearchKitPSM(){}
 
-    void Configure(const std::string & CMN_UNUSED(filename));
+    void Configure(const std::string & filename) override;
 
 protected:
     // constraint controller
@@ -54,12 +57,20 @@ protected:
     prmKinematicsState mMeasuredKinematics; // follow crtk convention
     prmKinematicsState mGoalKinematics;
     int mNumDof;
+    int mNumJoints;
+    vctDoubleMat mJacobianSpatialBase, mJacobianTransformation;
     void SetupRobot();
 
     nmrConstraintOptimizer::STATUS Solve(vctDoubleVec & dq);
     void UpdateOptimizerKinematics();
-};
 
+    // Cartesian position control function override
+    void ControlPositionCartesian() override;
+
+    // provide interface for enabling constraint motion (for teleop class)
+    virtual void SetConstraintMotionEnable(const bool & status);
+    bool mConstraintMotionEnabled;
+};
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedIntuitiveResearchKitPSM);
 

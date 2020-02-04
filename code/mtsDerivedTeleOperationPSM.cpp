@@ -68,6 +68,8 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
                               PSMSetWrenchBodyOrientationAbsolute);
     interfacePSM->AddFunction("GetVelocityCartesian",
                               PSMGetVelocityCartesian);
+    interfacePSM->AddFunction("SetConstraintMotionEnable",
+                              PSMSetConstraintMotionEnable);
 
     // Same for MTM
     mtsInterfaceRequired * interfaceMTM = GetInterfaceRequired("MTM");
@@ -75,6 +77,9 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
     interfaceMTM->AddFunction("SetWrenchBodyOrientationAbsolute",
                               MTMSetWrenchBodyOrientationAbsolute,
                               MTS_OPTIONAL);
+
+    // ignore jaw
+    mIgnoreJaw = true;
 }
 
 void mtsDerivedTeleOperationPSM::EnterEnabled(void)
@@ -85,6 +90,10 @@ void mtsDerivedTeleOperationPSM::EnterEnabled(void)
     if (MTMSetWrenchBodyOrientationAbsolute.IsValid()) {
         MTMSetWrenchBodyOrientationAbsolute(true);
     }
+
+    // TODO: call this after registration
+    // tell derived psm that constraint motion should be enabled
+    PSMSetConstraintMotionEnable(true);
 }
 
 void mtsDerivedTeleOperationPSM::RunEnabled(void)
@@ -92,31 +101,41 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
     // We call the base class method for enabled state, it'll handle most of the work
     BaseType::RunEnabled();
 
-    // Only if the PSM is following
-    if (mIsFollowing) {
-        prmForceCartesianGet wrenchPSM;
-        prmVelocityCartesianGet velocityPSM;
-        prmForceCartesianSet wrenchMTM;
+//    // Only if the PSM is following
+//    if (mIsFollowing) {
+//        prmForceCartesianGet wrenchPSM;
+//        prmVelocityCartesianGet velocityPSM;
+//        prmForceCartesianSet wrenchMTM;
 
-        // Get estimated wrench and velocity from PSM
-        PSMGetWrenchBody(wrenchPSM);
-        PSMGetVelocityCartesian(velocityPSM);
+//        // Get estimated wrench and velocity from PSM
+//        PSMGetWrenchBody(wrenchPSM);
+//        PSMGetVelocityCartesian(velocityPSM);
 
-        // Extract only position data, ignore orientation
-        const vct3 velocity = velocityPSM.VelocityLinear();
-        vct3 force = wrenchPSM.Force().Ref<3>(0);
+//        // Extract only position data, ignore orientation
+//        const vct3 velocity = velocityPSM.VelocityLinear();
+//        vct3 force = wrenchPSM.Force().Ref<3>(0);
 
-        // Scale force based on velocity, i.e. at high velocity apply less forces
-        for (size_t i = 0; i < 3; i++) {
-            double velocityDumping = 1.0 / (20.0 * std::fabs(velocity[i]) + 1.0);
-            // Compute force in opposite direction and scale back on master
-            force[i] = -0.3 * velocityDumping * force[i];
-        }
+//        // Scale force based on velocity, i.e. at high velocity apply less forces
+//        for (size_t i = 0; i < 3; i++) {
+//            double velocityDumping = 1.0 / (20.0 * std::fabs(velocity[i]) + 1.0);
+//            // Compute force in opposite direction and scale back on master
+//            force[i] = -0.3 * velocityDumping * force[i];
+//        }
 
-        // Re-orient based on rotation between MTM and PSM
-        force = mRegistrationRotation.Inverse() * force;
-        // Set wrench for MTM
-        wrenchMTM.Force().Ref<3>(0) = force;
-        mMTM.SetWrenchBody(wrenchMTM);
-    }
+//        // Re-orient based on rotation between MTM and PSM
+//        force = mRegistrationRotation.Inverse() * force;
+//        // Set wrench for MTM
+//        wrenchMTM.Force().Ref<3>(0) = force;
+//        mMTM.SetWrenchBody(wrenchMTM);
+//    }
+}
+
+void mtsDerivedTeleOperationPSM::TransitionEnabled()
+{
+    std::cout << "Transition Enabled" << std::endl;
+
+    BaseType::TransitionEnabled();
+
+    // tell derived psm that constraint motion should be disabled
+    PSMSetConstraintMotionEnable(false);
 }

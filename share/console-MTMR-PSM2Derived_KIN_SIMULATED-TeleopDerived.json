@@ -1,0 +1,73 @@
+/* -*- Mode: Javascript; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+{
+    "component-manager": {
+        "components":
+        [
+            // this is to use our derived Teleop PSM, the name must
+            // match the name the console would use,
+            // i.e. <master>-<slave>
+            {
+                "shared-library": "USAblation",
+                "class-name": "mtsDerivedTeleOperationPSM",
+                "constructor-arg": {
+                    "Name": "MTMR-PSM2",
+                    "Period": 0.001
+                }
+            },
+            {
+                "shared-library": "USAblation",
+                "class-name": "mtsDerivedIntuitiveResearchKitPSM",
+                "constructor-arg": {
+                    "Name": "PSM2",
+                    "Period": 0.001
+                }
+            }
+        ]
+    }
+    ,
+    "io":
+    {
+        "footpedals": "io/sawRobotIO1394-MTMR-foot-pedals.xml"
+    }
+    ,
+    "arms":
+    [
+        {
+            "name": "MTMR",
+            "type": "MTM",
+            "serial": "79526",
+            "base-frame": {
+                "reference-frame": "HRSV",
+                "transform": [[ -1.0,  0.0,          0.0,          0.180],
+                              [  0.0,  0.866025404,  0.5,          0.400],
+                              [  0.0,  0.5,         -0.866025404,  0.475],
+                              [  0.0,  0.0,          0.0,          1.0]]
+            }
+        }
+        ,
+        {
+            "name": "PSM2",
+            "type": "PSM_DERIVED",
+            "simulation": "KINEMATIC",
+            "arm": "arm/PSM_KIN_SIMULATED_LARGE_NEEDLE_DRIVER_400006.json",
+            "base-frame": {
+                "reference-frame": "ECM",
+                "transform": [[  1.0,  0.0,          0.0,          0.20],
+                              [  0.0, -0.866025404,  0.5,          0.0 ],
+                              [  0.0, -0.5,         -0.866025404,  0.0 ],
+                              [  0.0,  0.0,          0.0,          1.0 ]]
+            }
+        }
+    ]
+    ,
+    "psm-teleops":
+    [
+        {
+            // this is where we tell the console to use our manually
+            // loaded teleop, using "type"
+            "type": "TELEOP_PSM_DERIVED",
+            "mtm": "MTMR",
+            "psm": "PSM2"
+        }
+    ]
+}

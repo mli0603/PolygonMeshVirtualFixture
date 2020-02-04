@@ -3,26 +3,24 @@
     "component-manager": {
         "components":
         [
-            // this is to use the ForceDimension SDK with whatever
-            // device is supported
-            {
-                "shared-library": "sawForceDimensionSDK",
-                "class-name": "mtsForceDimension",
-                "constructor-arg": {
-                    "Name": "ForceDimensionSDK"
-                },
-                "configure-parameter": "sawForceDimensionSDK-MTMR.json"
-            }
-            ,
             // this is to use our derived Teleop PSM, the name must
             // match the name the console would use,
             // i.e. <master>-<slave>
             {
-                "shared-library": "sawIntuitiveResearchKitDerivedTeleOperationPSM",
+                "shared-library": "USAblation",
                 "class-name": "mtsDerivedTeleOperationPSM",
                 "constructor-arg": {
-                    "Name": "MTMR-PSM1",
-                    "Period": 0.001
+                    "Name": "MTMR-PSM2",
+                    "Period": 0.1
+                }
+            }
+            ,
+            {
+                "shared-library": "USAblation",
+                "class-name": "mtsDerivedIntuitiveResearchKitPSM",
+                "constructor-arg": {
+                    "Name": "PSM2",
+                    "Period": 0.1
                 }
             }
             ,
@@ -58,18 +56,31 @@
     "arms":
     [
         {
-            "name": "MTMR",  // created previously using custom components
-            "type": "MTM_GENERIC",
-            "component": "ForceDimensionSDK",
-            "interface": "MTMR"
+            "name": "MTMR",
+            "type": "MTM",
+            "simulation": "KINEMATIC",
+            "arm": "arm/MTMR_KIN_SIMULATED.json",
+            "base-frame": {
+                "reference-frame": "HRSV",
+                "transform": [[ -1.0,  0.0,          0.0,          0.180],
+                              [  0.0,  0.866025404,  0.5,          0.400],
+                              [  0.0,  0.5,         -0.866025404,  0.475],
+                              [  0.0,  0.0,          0.0,          1.0]]
+            }
         }
         ,
         {
-            "name": "PSM1",
-            "type": "PSM",
+            "name": "PSM2",
+            "type": "PSM_DERIVED",
             "simulation": "KINEMATIC",
-            "pid": "sawControllersPID-PSM.xml",
-            "kinematic": "psm-large-needle-driver.json"
+            "arm": "arm/PSM_KIN_SIMULATED_LARGE_NEEDLE_DRIVER_400006.json",
+            "base-frame": {
+                "reference-frame": "ECM",
+                "transform": [[  1.0,  0.0,          0.0,          0.20],
+                              [  0.0, -0.866025404,  0.5,          0.0 ],
+                              [  0.0, -0.5,         -0.866025404,  0.0 ],
+                              [  0.0,  0.0,          0.0,          1.0 ]]
+            }
         }
     ]
     ,
@@ -79,11 +90,8 @@
             // this is where we tell the console to use our manually
             // loaded teleop, using "type"
             "type": "TELEOP_PSM_DERIVED",
-            "master": "MTMR",
-            "slave": "PSM1",
-            "rotation" : [[ 0.0000, -1.0000,  0.0000],
-                          [ 1.0000,  0.0000,  0.0000],
-                          [ 0.0000,  0.0000,  1.0000]]
+            "mtm": "MTMR",
+            "psm": "PSM2"
         }
     ]
 }

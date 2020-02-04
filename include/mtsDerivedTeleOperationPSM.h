@@ -37,11 +37,13 @@ public:
 protected:
     void EnterEnabled(void);
     void RunEnabled(void);
+    void TransitionEnabled(void);
     
     mtsFunctionRead  PSMGetWrenchBody;
     mtsFunctionWrite PSMSetWrenchBodyOrientationAbsolute;
     mtsFunctionRead  PSMGetVelocityCartesian;
     mtsFunctionWrite MTMSetWrenchBodyOrientationAbsolute;
+    mtsFunctionWrite PSMSetConstraintMotionEnable;
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedTeleOperationPSM);
