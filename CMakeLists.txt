@@ -35,6 +35,13 @@ if (cisst_FOUND)
     set (LIBRARY_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/lib")
   endif ()
 
+  # create/configure file for find_package (USAblation)
+  set (USAblation_INCLUDE_DIR
+       "${USAblation_SOURCE_DIR}/include"
+       "${USAblation_BINARY_DIR}/include")
+  set (USAblation_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+  set (USAblation_LIBRARIES USAblation)
+
   # sawIntuitiveResearchKit has been compiled within cisst, we should
   # find it automatically
   find_package(sawIntuitiveResearchKit 1.7.1 REQUIRED)
@@ -77,5 +84,7 @@ if (cisst_FOUND)
                         ${sawConstraintController_LIBRARIES}
                         ${cisstICP_LIBRARIES})
 
-
+    configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/USAblationConfig.cmake.in"
+                    "${USAblation_CMAKE_CONFIG_FILE}"
+                    @ONLY)
 endif (cisst_FOUND)
