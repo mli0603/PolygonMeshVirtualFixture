@@ -72,6 +72,7 @@ if (cisst_FOUND)
               "code/mtsDerivedTeleOperationPSM.cpp"
               "include/mtsDerivedIntuitiveResearchKitPSM.h"
               "code/mtsDerivedIntuitiveResearchKitPSM.cpp"
+              "include/robHelper.h"
               )
 
   cisst_target_link_libraries (USAblation

@@ -58,7 +58,7 @@ protected:
     prmKinematicsState mGoalKinematics;
     int mNumDof;
     int mNumJoints;
-    vctDoubleMat mJacobianSpatialBase, mJacobianTransformation;
+    vctDoubleMat mJacobianBodyBase;
     void SetupRobot();
 
     nmrConstraintOptimizer::STATUS Solve(vctDoubleVec & dq);

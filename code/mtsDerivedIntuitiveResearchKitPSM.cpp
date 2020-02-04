@@ -18,6 +18,7 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <mtsDerivedIntuitiveResearchKitPSM.h>
 #include <cisstMultiTask/mtsInterfaceProvided.h>
+#include <robHelper.h>
 
 CMN_IMPLEMENT_SERVICES_DERIVED_ONEARG(mtsDerivedIntuitiveResearchKitPSM,
                                       mtsIntuitiveResearchKitPSM,
@@ -120,11 +121,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupRobot()
 
     mGoalKinematics.Name="GoalKinematics";
 
-    mJacobianSpatialBase.SetSize(mNumDof,mNumJoints);
-
-    // transformation is [R 0; 0 R]
-    mJacobianTransformation.SetSize(mNumDof,mNumDof);
-    mJacobianTransformation.Zeros();
+    mJacobianBodyBase.SetSize(mNumDof,mNumJoints);
 
     mConstraintMotionEnabled = false;
 }
@@ -147,15 +144,8 @@ void mtsDerivedIntuitiveResearchKitPSM::UpdateOptimizerKinematics()
     mMeasuredKinematics.Frame.FromNormalized(CartesianGet); // see mtsIntuitiveResearchKitArm
 
     // transform jacobian
-    mJacobianTransformation.Ref(3,3,0,0).Assign(BaseFrame.Rotation());
-    mJacobianTransformation.Ref(3,3,3,3).Assign(BaseFrame.Rotation());
-    mJacobianSpatialBase.Assign(mJacobianTransformation * mJacobianSpatial);
-    std::cout << "BaseFrm \n" << BaseFrame << std::endl;
-    std::cout << "Jacobian Transformation \n " << mJacobianTransformation << std::endl;
-    std::cout << "Jacobian spatial local \n" << mJacobianSpatial << std::endl;
-    std::cout << "Jacobian spatial in base \n" << mJacobianSpatialBase << std::endl;
-
-    mMeasuredKinematics.Jacobian.Assign(mJacobianSpatialBase); // TODO: check if this jacobain is correct?
+    Jacobian::ChangeBase(mJacobianBody,CartesianGet,mJacobianBodyBase);
+    mMeasuredKinematics.Jacobian.Assign(mJacobianBodyBase);
 
     // set goal cartesian position
 //    CartesianPositionFrm.From(CartesianSetParam.Goal()); // TODO: recover this
@@ -176,26 +166,24 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
             // copy current position
             vctDoubleVec jointSet(StateJointKinematics.Position());
             vctDoubleVec jointPosition(jointSet);
-            std::cout << "current joint position" << jointSet << std::endl;
             // compute desired arm position
             CartesianPositionFrm.From(CartesianSetParam.Goal());
-            if (this->InverseKinematics(jointSet, BaseFrame.Inverse() * CartesianPositionFrm) == robManipulator::ESUCCESS) {
-                std::cout << "target joint position" << jointSet << std::endl;
 
+            vctDoubleVec dx(CartesianPositionFrm.Translation()-CartesianGet.Translation());
+            if (this->InverseKinematics(jointSet, BaseFrame.Inverse() * CartesianPositionFrm) == robManipulator::ESUCCESS) {
                 // numerical solve
                 vctDoubleVec jointIncrement;
                 nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointIncrement);
-                if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
-                        std::cout << "incremental joint position" << jointSet-jointPosition << std::endl;
-                        std::cout << "linear increment local" << BaseFrame.Rotation().Inverse()*(CartesianGet.Translation()-CartesianPositionFrm.Translation()) << std::endl;
-                        std::cout << "linear increment in base" << CartesianGet.Translation()-CartesianPositionFrm.Translation() << std::endl;
-                        std::cout << "incremental Cartesian position local using jacobian spatial" << mJacobianSpatial*(jointSet-jointPosition) << std::endl;
-                        std::cout << "incremental Cartesian position in base using jacobian spatial" << mJacobianTransformation*mJacobianSpatial*(jointSet-jointPosition) << std::endl;
-                        std::cout << "numerical solution" << jointIncrement.Ref(mNumJoints,0) << std::endl<<std::endl;// in case slack is used
+                if (dx.Norm() > 1E-3){
+                    std::cout << "joint increment \n" << jointSet- jointPosition << std::endl;
+                    if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
+                        std::cout << "numerical solution \n" << jointIncrement.Ref(mNumJoints,0) << std::endl;
+                        std::cout << "error \n" << jointIncrement.Ref(mNumJoints,0) - jointSet + jointPosition  << std::endl<<std::endl;// in case slack is used
+                    }
                 }
 
                 // finally send new joint values
-                SetPositionJointLocal(jointSet);
+                SetPositionJointLocal(jointPosition+jointIncrement);
             } else {
                 // shows robManipulator error if used
                 if (this->Manipulator) {
