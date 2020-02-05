@@ -92,6 +92,18 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
 //        mController->VFMap.insert(std::pair<std::string,mtsVFLimitsConstraint *>(mJointLimitsConstraint.Name,new mtsVFLimitsConstraint(mJointLimitsConstraint.Name,new mtsVFDataJointLimits(mJointLimitsConstraint))));
 //    }
 
+    // plane constraint
+    mPlaneConstraint.Name = "PlaneConstraint";
+    mPlaneConstraint.IneqConstraintRows = 1;
+    mPlaneConstraint.Normal.Assign(1.0,0.0,0.0);
+    mPlaneConstraint.PointOnPlane.Assign(0.185, 0.0, 0.0);
+    mPlaneConstraint.NumJoints = mNumJoints;
+    // use the names defined above to relate kinematics data
+    mPlaneConstraint.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
+    if (!mController->SetVFData(mPlaneConstraint))
+    {
+        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneConstraint.Name, new mtsVFPlane(mPlaneConstraint.Name, new mtsVFDataPlane(mPlaneConstraint))));
+    }
 
 //    // mesh constraint
 //    mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Cube.STL");
@@ -148,7 +160,7 @@ void mtsDerivedIntuitiveResearchKitPSM::UpdateOptimizerKinematics()
     mMeasuredKinematics.Jacobian.Assign(mJacobianBodyBase);
 
     // set goal cartesian position
-//    CartesianPositionFrm.From(CartesianSetParam.Goal()); // TODO: recover this
+    CartesianPositionFrm.From(CartesianSetParam.Goal()); // compute desired arm position
     mGoalKinematics.Frame.Assign(vctFrm3(CartesianPositionFrm));
 
     // update controller stored kinematics
@@ -164,36 +176,31 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
     else{
         if (mHasNewPIDGoal) {
             // copy current position
-            vctDoubleVec jointSet(StateJointKinematics.Position());
-            vctDoubleVec jointPosition(jointSet);
-            // compute desired arm position
-            CartesianPositionFrm.From(CartesianSetParam.Goal());
+            vctDoubleVec jointPosition(StateJointKinematics.Position());
 
-            vctDoubleVec dx(CartesianPositionFrm.Translation()-CartesianGet.Translation());
-            if (this->InverseKinematics(jointSet, BaseFrame.Inverse() * CartesianPositionFrm) == robManipulator::ESUCCESS) {
-                // numerical solve
-                vctDoubleVec jointIncrement;
-                nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointIncrement);
-                if (dx.Norm() > 1E-3){
-                    std::cout << "joint increment \n" << jointSet- jointPosition << std::endl;
-                    if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
-                        std::cout << "numerical solution \n" << jointIncrement.Ref(mNumJoints,0) << std::endl;
-                        std::cout << "error \n" << jointIncrement.Ref(mNumJoints,0) - jointSet + jointPosition  << std::endl<<std::endl;// in case slack is used
-                    }
-                }
-
+            // numerical solve
+            vctDoubleVec jointIncrement;
+            nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointIncrement);
+            if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
                 // finally send new joint values
                 SetPositionJointLocal(jointPosition+jointIncrement);
-            } else {
-                // shows robManipulator error if used
-                if (this->Manipulator) {
-                    RobotInterface->SendError(this->GetName()
-                                              + ": unable to solve inverse kinematics ("
-                                              + this->Manipulator->LastError() + ")");
-                } else {
-                    RobotInterface->SendError(this->GetName() + ": unable to solve inverse kinematics");
-                }
             }
+            else{
+                std::cout << optimizerStatus << std::endl;
+                std::cout << "No solution found" << std::endl;
+                std::cout << optimizerStatus << std::endl;
+            }
+
+//            vctDoubleVec dx(CartesianPositionFrm.Translation()-CartesianGet.Translation());
+//            if (this->InverseKinematics(jointSet, BaseFrame.Inverse() * CartesianPositionFrm) == robManipulator::ESUCCESS) {
+//                if (dx.Norm() > 1E-3){
+//                    std::cout << "joint increment \n" << jointSet- jointPosition << std::endl;
+//                    if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
+//                        std::cout << "numerical solution \n" << jointIncrement.Ref(mNumJoints,0) << std::endl;
+//                        std::cout << "error \n" << jointIncrement.Ref(mNumJoints,0) - jointSet + jointPosition  << std::endl<<std::endl;// in case slack is used
+//                    }
+//                }
+
             // reset flag
             mHasNewPIDGoal = false;
         }

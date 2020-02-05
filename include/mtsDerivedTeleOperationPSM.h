@@ -44,6 +44,9 @@ protected:
     mtsFunctionRead  PSMGetVelocityCartesian;
     mtsFunctionWrite MTMSetWrenchBodyOrientationAbsolute;
     mtsFunctionWrite PSMSetConstraintMotionEnable;
+
+    vctFrm4x4 mPSMProxyMeasuredCartesianPosition;
+    vct3 elasticityGain;
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedTeleOperationPSM);

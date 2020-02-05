@@ -80,6 +80,8 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
 
     // ignore jaw
     mIgnoreJaw = true;
+    elasticityGain.Assign(1.0,1.0,1.0);
+    elasticityGain.Multiply(100.0);
 }
 
 void mtsDerivedTeleOperationPSM::EnterEnabled(void)
@@ -98,36 +100,91 @@ void mtsDerivedTeleOperationPSM::EnterEnabled(void)
 
 void mtsDerivedTeleOperationPSM::RunEnabled(void)
 {
-    // We call the base class method for enabled state, it'll handle most of the work
-    BaseType::RunEnabled();
+    if (mMTM.PositionCartesianCurrent.Valid()
+        && mPSM.PositionCartesianCurrent.Valid()) {
+        // follow mode
+        if (!mIsClutched) {
+            // compute mtm Cartesian motion
+            vctFrm4x4 mtmPosition(mMTM.PositionCartesianCurrent.Position());
 
-//    // Only if the PSM is following
-//    if (mIsFollowing) {
-//        prmForceCartesianGet wrenchPSM;
-//        prmVelocityCartesianGet velocityPSM;
-//        prmForceCartesianSet wrenchMTM;
+            // translation
+            vct3 mtmTranslation;
+            vct3 psmTranslation;
+            if (mTranslationLocked) {
+                psmTranslation = mPSM.CartesianInitial.Translation();
+            } else {
+                mtmTranslation = (mtmPosition.Translation() - mMTM.CartesianInitial.Translation());
+                psmTranslation = mtmTranslation * mScale;
+                psmTranslation = mRegistrationRotation * psmTranslation + mPSM.CartesianInitial.Translation();
+            }
+            // rotation
+            vctMatRot3 psmRotation;
+            if (mRotationLocked) {
+                psmRotation.From(mPSM.CartesianInitial.Rotation());
+            } else {
+                psmRotation = mRegistrationRotation * mtmPosition.Rotation() * mAlignOffsetInitial;
+            }
 
-//        // Get estimated wrench and velocity from PSM
-//        PSMGetWrenchBody(wrenchPSM);
-//        PSMGetVelocityCartesian(velocityPSM);
+            // compute desired psm position
+            vctFrm4x4 psmCartesianGoal;
+            psmCartesianGoal.Translation().Assign(psmTranslation);
+            psmCartesianGoal.Rotation().FromNormalized(psmRotation);
 
-//        // Extract only position data, ignore orientation
-//        const vct3 velocity = velocityPSM.VelocityLinear();
-//        vct3 force = wrenchPSM.Force().Ref<3>(0);
+            // take into account changes in PSM base frame if any
+            if (mBaseFrame.GetPositionCartesian.IsValid()) {
+                vctFrm4x4 baseFrame(mBaseFrame.PositionCartesianCurrent.Position());
+                vctFrm4x4 baseFrameChange = baseFrame.Inverse() * mBaseFrame.CartesianInitial;
+                // update PSM position goal
+                psmCartesianGoal = baseFrameChange * psmCartesianGoal;
+                // update alignment offset
+                mtmPosition.Rotation().ApplyInverseTo(psmCartesianGoal.Rotation(), mAlignOffset);
+            }
 
-//        // Scale force based on velocity, i.e. at high velocity apply less forces
-//        for (size_t i = 0; i < 3; i++) {
-//            double velocityDumping = 1.0 / (20.0 * std::fabs(velocity[i]) + 1.0);
-//            // Compute force in opposite direction and scale back on master
-//            force[i] = -0.3 * velocityDumping * force[i];
-//        }
+            // PSM go this cartesian position
+            mPSM.PositionCartesianSet.Goal().FromNormalized(psmCartesianGoal);
+            mPSM.SetPositionCartesian(mPSM.PositionCartesianSet);
 
-//        // Re-orient based on rotation between MTM and PSM
-//        force = mRegistrationRotation.Inverse() * force;
-//        // Set wrench for MTM
-//        wrenchMTM.Force().Ref<3>(0) = force;
-//        mMTM.SetWrenchBody(wrenchMTM);
-//    }
+            if (!mIgnoreJaw) {
+                // Gripper
+                if (mMTM.GetStateGripper.IsValid()) {
+                    prmStateJoint gripper;
+                    mMTM.GetStateGripper(gripper);
+                    mPSM.PositionJointSet.Goal()[0] = GripperToJaw(gripper.Position()[0])
+                        + mJawOffset;
+                    if (mPSM.PositionJointSet.Goal()[0] < mGripperToJaw.PositionMin) {
+                        mPSM.PositionJointSet.Goal()[0] = mGripperToJaw.PositionMin;
+                    }
+                    mPSM.SetPositionJaw(mPSM.PositionJointSet);
+                } else {
+                    mPSM.PositionJointSet.Goal()[0] = 45.0 * cmnPI_180;
+                    mPSM.SetPositionJaw(mPSM.PositionJointSet);
+                }
+            }
+
+            // Use proxy location to set haptics feedback; Only if the PSM is following
+            if (mIsFollowing){
+                prmPositionCartesianGet psmMeasuredCartesian;
+                mPSM.GetPositionCartesian(psmMeasuredCartesian);
+                vct3 diff = psmCartesianGoal.Translation() - psmMeasuredCartesian.Position().Translation();
+                vct3 force;
+                for (size_t i=0 ; i < 3; i++){
+                    force[i] = - elasticityGain[i] * diff[i];
+                }
+                if (force.Norm()>1E-3){
+                    std::cout << "current haptic feedback is " << force << std::endl;
+                }
+//                // Re-orient based on rotation between MTM and PSM
+//                force = mRegistrationRotation.Inverse() * force;
+//                // set force to MTM
+//                prmForceCartesianSet wrenchMTM;
+//                wrenchMTM.Force().Ref<3>(0) = force;
+//                mMTM.SetWrenchBody(wrenchMTM);
+            }
+            else{
+                std::cout << "PSM not following" << std::endl;
+            }
+        }
+    }
 }
 
 void mtsDerivedTeleOperationPSM::TransitionEnabled()
