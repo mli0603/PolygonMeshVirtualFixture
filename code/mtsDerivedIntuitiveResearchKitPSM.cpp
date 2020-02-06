@@ -40,14 +40,17 @@ mtsDerivedIntuitiveResearchKitPSM::mtsDerivedIntuitiveResearchKitPSM(const mtsTa
 void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
 {
     if (filename.empty()){
-        // ros communication
+        // for ros communication
+        this->StateTable.AddData(mProxyCartesianPosition, "ProxyCartesianPosition");
+
         mtsInterfaceProvided * derivedRosInterface = AddInterfaceProvided("providesPSM2");
         if (derivedRosInterface){
             // read constraint motion status
             derivedRosInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable, this, "ReadConstraintMotionEnable");
-
             // set constraint motion status
             derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
+            // read proxy location
+            derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCartesianPosition, "GetProxyPositionCartesian");
         }
     }
     else{
@@ -178,9 +181,11 @@ void mtsDerivedIntuitiveResearchKitPSM::UpdateOptimizerKinematics()
 
 void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
 {
+    // run without constraint motion
     if (!mConstraintMotionEnabled){
         BaseType::ControlPositionCartesian();
     }
+    // constraint motion
     else{
         if (mHasNewPIDGoal) {
             // copy current position
@@ -215,9 +220,20 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
     }
 }
 
+void mtsDerivedIntuitiveResearchKitPSM::GetRobotData()
+{
+    BaseType::GetRobotData();
+
+    // add proxy position update
+    if (mJointReady && mCartesianReady && mHasNewPIDGoal){
+        mProxyCartesianPosition.SetTimestamp(StateJointKinematics.Timestamp());
+        mProxyCartesianPosition.SetValid(BaseFrameValid);
+        mProxyCartesianPosition.Position().From(CartesianSetParam.Goal());
+    }
+}
+
 void mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable(const bool &status)
 {
-    std::cout << "\n\n\nrecived command as "<< status << std::endl;
     mConstraintMotionEnabled = status;
 }
 

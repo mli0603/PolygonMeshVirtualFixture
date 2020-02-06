@@ -66,13 +66,17 @@ protected:
     nmrConstraintOptimizer::STATUS Solve(vctDoubleVec & dq);
     void UpdateOptimizerKinematics();
 
-    // Cartesian position control function override
+    // function override
     void ControlPositionCartesian() override;
+    void GetRobotData() override;
 
-    // provide interface for enabling constraint motion (for teleop class)
+    // provide interface for enabling constraint motion
     virtual void SetConstraintMotionEnable(const bool & status);
     virtual void ReadConstraintMotionEnable(bool & status) const;
     bool mConstraintMotionEnabled;
+
+    // provide interface for publishing proxy location
+    prmPositionCartesianGet mProxyCartesianPosition;
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedIntuitiveResearchKitPSM);

@@ -92,6 +92,11 @@ void mtsDerivedROSBridge::Configure(const std::string &filename)
                                                                             mtsFunction,
                                                                             topicName);
                 }
+                if (cisstType == "prmPositionCartesianGet" && rosType == "geometry_msgs::PoseStamped"){
+                    this->AddPublisherFromCommandRead<prmPositionCartesianGet,geometry_msgs::PoseStamped>(interfaceName,
+                                                                            mtsFunction,
+                                                                            topicName);
+                }
 
             }
         }
