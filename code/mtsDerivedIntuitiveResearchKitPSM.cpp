@@ -51,6 +51,8 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
             derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
             // read proxy location
             derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCartesianPosition, "GetProxyPositionCartesian");
+            // set skull to psm transform
+            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
         }
     }
     else{
@@ -240,4 +242,12 @@ void mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable(const bool &st
 void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status) const
 {
     status = mConstraintMotionEnabled;
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &transform)
+{
+    mSkullToPSMTransform.Assign(transform);
+
+    // TODO: recompute the skull coordinates
+    std::cout << "need to recompute skull coordinates" << std::endl;
 }

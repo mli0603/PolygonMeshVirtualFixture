@@ -11,6 +11,12 @@
                     "ros_type": "std_msgs::Bool",
                     "mts_function": "SetConstraintMotionEnable",
                     "topic_name": "/PSM2/constraint_motion_status_set"
+                },
+                {
+                    "cisst_type": "vctFrm4x4",
+                    "ros_type": "geometry_msgs::Transform",
+                    "mts_function": "SetSkullToPSMTransform",
+                    "topic_name": "/Transform/skull_to_psm"
                 }
             ]
         }

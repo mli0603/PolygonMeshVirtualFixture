@@ -105,12 +105,18 @@ class RegistrationObject():
         self.igtl_point_pub.publish(msg)
 
     def transformCallback(self, data):
-        print('transform')
-        print(data)
+        if data.name == "Skull To PSM":
+            t = data.transform
+            
+            t.translation.x = data.transform.translation.x / m_to_mm
+            t.translation.y = data.transform.translation.y / m_to_mm
+            t.translation.z = data.transform.translation.z / m_to_mm
 
-        # TODO: check name
-        transfrom = data.transform
-        self.transform_pub.publish(transfrom)
+            self.transform_pub.publish(t)
+            
+            print('---------------------')
+            print('---------------------')
+            print('Transformation received: ', t)
 
     def registration(self):
         rospy.init_node('ds_registration', anonymous=True)
@@ -130,7 +136,7 @@ class RegistrationObject():
 
         # publish to robot
         self.transform_pub = rospy.Publisher(
-            '/simple_robot/transfrom/ee_to_ds', Transform, queue_size=1, latch=True)
+            '/Transform/skull_to_psm', Transform, queue_size=1, latch=True)
 
         rate = rospy.Rate(10)  # 10Hz
 

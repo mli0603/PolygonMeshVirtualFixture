@@ -65,6 +65,11 @@ void mtsDerivedROSBridge::Configure(const std::string &filename)
                                                                              mtsFunction,
                                                                              topicName);
                 }
+                if (cisstType == "vctFrm4x4" && rosType == "geometry_msgs::Transform"){
+                    this->AddSubscriberToCommandWrite<vctFrm4x4,geometry_msgs::Transform>(interfaceName,
+                                                                             mtsFunction,
+                                                                             topicName);
+                }
             }
 
             // subscriber has to spin

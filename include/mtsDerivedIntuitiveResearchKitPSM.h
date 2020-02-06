@@ -70,13 +70,13 @@ protected:
     void ControlPositionCartesian() override;
     void GetRobotData() override;
 
-    // provide interface for enabling constraint motion
+    // provide interfaces
     virtual void SetConstraintMotionEnable(const bool & status);
     virtual void ReadConstraintMotionEnable(bool & status) const;
+    virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
     bool mConstraintMotionEnabled;
-
-    // provide interface for publishing proxy location
     prmPositionCartesianGet mProxyCartesianPosition;
+    vctFrm4x4 mSkullToPSMTransform;
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedIntuitiveResearchKitPSM);
