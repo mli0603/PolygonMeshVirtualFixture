@@ -40,7 +40,15 @@ mtsDerivedIntuitiveResearchKitPSM::mtsDerivedIntuitiveResearchKitPSM(const mtsTa
 void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
 {
     if (filename.empty()){
-        std::cout << "this is the intial config, skip"<<std::endl;
+        // ros communication
+        mtsInterfaceProvided * derivedRosInterface = AddInterfaceProvided("providesPSM2");
+        if (derivedRosInterface){
+            // read constraint motion status
+            derivedRosInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable, this, "ReadConstraintMotionEnable");
+
+            // set constraint motion status
+            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
+        }
     }
     else{
         BaseType::Configure(filename);
@@ -211,4 +219,9 @@ void mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable(const bool &st
 {
     std::cout << "\n\n\nrecived command as "<< status << std::endl;
     mConstraintMotionEnabled = status;
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status) const
+{
+    status = mConstraintMotionEnabled;
 }

@@ -14,6 +14,14 @@ project (USAblation)
 
 cmake_minimum_required(VERSION 2.8)
 
+find_package(catkin REQUIRED COMPONENTS
+        cisst_ros_bridge
+        roscpp
+        geometry_msgs
+        std_msgs
+        sensor_msgs
+)
+
 set (REQUIRED_CISST_LIBRARIES
      cisstCommon
      cisstVector
@@ -28,6 +36,12 @@ find_package (cisst REQUIRED ${REQUIRED_CISST_LIBRARIES})
 if (cisst_FOUND)
   # load cisst configuration
   include (${CISST_USE_FILE})
+
+  # find include in catkin space
+  include_directories (${catkin_INCLUDE_DIRS})
+  file (MAKE_DIRECTORY "${CATKIN_DEVEL_PREFIX}/include")
+  catkin_package (INCLUDE_DIRS "${CATKIN_DEVEL_PREFIX}/include"
+                CATKIN_DEPENDS cisst_ros_bridge geometry_msgs roscpp std_msgs)
 
   # catkin/ROS paths
   cisst_is_catkin_build (USAblation_IS_CATKIN_BUILT)
@@ -73,6 +87,8 @@ if (cisst_FOUND)
               "include/mtsDerivedIntuitiveResearchKitPSM.h"
               "code/mtsDerivedIntuitiveResearchKitPSM.cpp"
               "include/robHelper.h"
+              "code/mtsDerivedROSBridge.cpp"
+              "include/mtsDerivedROSBridge.h"
               )
 
   cisst_target_link_libraries (USAblation

@@ -1,0 +1,18 @@
+/* -*- Mode: Javascript; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+{
+    "subscriber":
+    [
+        {
+            "interface": "requiresPSM2",
+            "topics":
+            [
+                {
+                    "cisst_type": "bool",
+                    "ros_type": "std_msgs::Bool",
+                    "mts_function": "SetConstraintMotionEnable",
+                    "topic_name": "/PSM2/constraint_motion_status_set"
+                }
+            ]
+        }
+    ]
+}

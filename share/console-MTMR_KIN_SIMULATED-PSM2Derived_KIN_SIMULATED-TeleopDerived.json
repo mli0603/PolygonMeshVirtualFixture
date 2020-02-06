@@ -24,6 +24,26 @@
                 }
             }
             ,
+            {
+                "shared-library": "USAblation",
+                "class-name": "mtsDerivedROSBridge",
+                "constructor-arg": {
+                    "Name": "Publisher",
+                    "Period": 0.1
+                },
+                "configure-parameter": "rosBridgePublisher.json"
+            }
+            ,
+            {
+                "shared-library": "USAblation",
+                "class-name": "mtsDerivedROSBridge",
+                "constructor-arg": {
+                    "Name": "Subscriber",
+                    "Period": 0.1
+                },
+                "configure-parameter": "rosBridgeSubscriber.json"
+            }
+            ,
             // this is just to get "foot pedals", no needed on a
             // physical dVRK system
             {
@@ -34,6 +54,29 @@
                 }
                 ,
                 "configure-parameter": "sawKeyboard-dVRK-console.json"
+            }
+        ],
+        "connections":
+        [
+            {
+                "required":{
+                    "component": "Publisher",
+                    "interface": "requiresPSM2" 
+                },
+                "provided":{
+                    "component": "PSM2",
+                    "interface": "providesPSM2" 
+                }
+            },
+            {
+                "required":{
+                    "component": "Subscriber",
+                    "interface": "requiresPSM2" 
+                },
+                "provided":{
+                    "component": "PSM2",
+                    "interface": "providesPSM2" 
+                }
             }
         ]
     }

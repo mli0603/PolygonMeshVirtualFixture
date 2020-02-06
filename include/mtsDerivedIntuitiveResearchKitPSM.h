@@ -71,6 +71,7 @@ protected:
 
     // provide interface for enabling constraint motion (for teleop class)
     virtual void SetConstraintMotionEnable(const bool & status);
+    virtual void ReadConstraintMotionEnable(bool & status) const;
     bool mConstraintMotionEnabled;
 };
 

@@ -1,5 +1,5 @@
 <package>
-  <name>us_ablation</name>
+  <name>USAblation</name>
   <version>1.7.1</version>
   <description>
   project for us cutter vf dvrk
@@ -8,13 +8,25 @@
   <license>cisst</license>
   <url>https://github.com/jhu-saw/sawIntuitiveResearchKit</url>
 
+  <build_depend>catkin</build_depend>
+  <build_depend>cisst_ros_bridge</build_depend>
   <build_depend>saw_intuitive_research_kit</build_depend>
   <build_depend>saw_constraint_controller</build_depend>
   <build_depend>cisst_icp</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
 
+  <run_depend>catkin</run_depend>
+  <run_depend>cisst_ros_bridge</run_depend>
   <run_depend>saw_intuitive_research_kit</run_depend>
   <run_depend>saw_constraint_controller</run_depend>
   <run_depend>cisst_icp</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
 
   <export>
     <build_type>catkin</build_type>
