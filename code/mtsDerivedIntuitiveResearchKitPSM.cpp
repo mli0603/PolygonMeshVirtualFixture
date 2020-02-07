@@ -119,7 +119,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     }
 
 //    // mesh constraint
-//    mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Cube.STL");
+//    mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Cube.STL",true);
 //    mMesh.Name = "Mesh";
 //    mMesh.BoudingDistance = 1.0;
 //    mMesh.NumJoints = mNumJoints;
