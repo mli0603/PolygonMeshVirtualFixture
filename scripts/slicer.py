@@ -9,6 +9,7 @@ from scipy.spatial.transform import Rotation as R
 from scipy.spatial.distance import cdist
 
 import datetime
+import argparse
 
 # keyboard
 import sys
@@ -40,15 +41,21 @@ def printMenu():
     print("Press r to re-collect data")
 
 class RegistrationObject():
-    def __init__(self):
-        self.curr_location = 0
+    def __init__(self, args):
         self.num_fiducials = 4
         self.record_started = False
-        self.num_data = 30 #00  # number of data to be collected
+        self.num_data = 100  # number of data to be collected
+    
         self.pose = np.empty([self.num_fiducials, self.num_data, 4, 4]).astype(np.float64)
-        self.counter = 0
-
         self.registration_point = np.empty([self.num_fiducials,3])
+
+        if args.sr:
+            self.curr_location = self.num_fiducials
+        else:
+            self.curr_location = 0
+        
+        self.counter = 0
+        
     
     def measuredCPCallBack(self, data):
         msg = igtlpoint()
@@ -169,10 +176,14 @@ class RegistrationObject():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--sr', action='store_true', help='Skip registration process')
+    args = parser.parse_args()
+
     try:
         old_settings = termios.tcgetattr(sys.stdin)
         tty.setcbreak(sys.stdin.fileno())
-        obj = RegistrationObject()
+        obj = RegistrationObject(args)
         obj.registration()
     except rospy.ROSInterruptException:
         pass
