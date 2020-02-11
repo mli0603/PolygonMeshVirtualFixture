@@ -88,23 +88,6 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
         mController->VFMap.insert(std::pair<std::string,mtsVFFollow *>(mTeleopObjective.Name,new mtsVFFollow(mTeleopObjective.Name,new mtsVFDataBase(mTeleopObjective))));
     }
 
-//    // joint limit constraint
-//    mJointLimitsConstraint.Name = "Joint Limit";
-//    mJointLimitsConstraint.IneqConstraintRows = 2 * mNumJoints;
-//    mJointLimitsConstraint.LowerLimits.SetSize(mNumJoints);
-//    mJointLimitsConstraint.LowerLimits.Assign(-0.001, -0.001, -0.001, -0.001, -0.001, -0.001); // TODO: change the velocity limit !!!!!!!!!!!!!!!!!!
-//    mJointLimitsConstraint.UpperLimits.SetSize(mNumJoints);
-//    mJointLimitsConstraint.UpperLimits.Assign(0.001, 0.001, 0.001, 0.001, 0.001, 0.001);
-//    mJointLimitsConstraint.KinNames.clear(); // sanity
-//    // use the names defined above to relate kinematics data
-//    mJointLimitsConstraint.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFLimitsConstraint.cpp
-
-//    if (!mController->SetVFData(mJointLimitsConstraint))
-//    {
-//        // Adds a new virtual fixture to the active vector
-//        mController->VFMap.insert(std::pair<std::string,mtsVFLimitsConstraint *>(mJointLimitsConstraint.Name,new mtsVFLimitsConstraint(mJointLimitsConstraint.Name,new mtsVFDataJointLimits(mJointLimitsConstraint))));
-//    }
-
     // plane constraint
     mPlaneLeft.Name = "PlaneConstraintLeft";
     mPlaneLeft.IneqConstraintRows = 1;
@@ -113,10 +96,10 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneLeft.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneLeft.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
-    if (!mController->SetVFData(mPlaneLeft))
-    {
-        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
-    }
+//    if (!mController->SetVFData(mPlaneLeft))
+//    {
+//        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
+//    }
 
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
@@ -125,24 +108,24 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneRight.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneRight.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
-    if (!mController->SetVFData(mPlaneRight))
-    {
-        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
-    }
-
-//    // mesh constraint
-//    mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Cube.STL",true);
-//    mMesh.Name = "Mesh";
-//    mMesh.BoudingDistance = 1.0;
-//    mMesh.NumJoints = mNumJoints;
-//    mMesh.KinNames.clear(); // sanity
-//    // use the names defined above to relate kinematics data
-//    mMesh.KinNames.push_back("MeasuredKinematics");
-
-//    if (!mController->SetVFData(mMesh))
+//    if (!mController->SetVFData(mPlaneRight))
 //    {
-//        mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, new mtsVFDataMesh(mMesh), mMeshFile)));
+//        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
 //    }
+
+    // mesh constraint
+    mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL",true);
+    mMesh.Name = "Mesh";
+    mMesh.BoundingDistance = 0.010; // bounding distance 1cm for intersection detection
+    mMesh.NumJoints = mNumJoints;
+    mMesh.KinNames.clear(); // sanity
+    // use the names defined above to relate kinematics data
+    mMesh.KinNames.push_back("MeasuredKinematics");
+
+    if (!mController->SetVFData(mMesh))
+    {
+        mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, new mtsVFDataMesh(mMesh), mMeshFile)));
+    }
 }
 
 void mtsDerivedIntuitiveResearchKitPSM::SetupRobot()
@@ -258,10 +241,12 @@ void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status)
 
 void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &transform)
 {
+    std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
+
     mSkullToPSMTransform.Assign(transform);
 
-    // TODO: recompute the skull coordinates
-    std::cout << "need to recompute skull coordinates" << std::endl;
+    // recompute skull coordinates
+    mMeshFile.TransformTriangle(mSkullToPSMTransform);
 
     // recompute plane coordinates
     mPlaneLeft.Normal = transform*mPlaneLeft.Normal;
