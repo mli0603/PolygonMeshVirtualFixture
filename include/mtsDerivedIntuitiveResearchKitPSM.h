@@ -50,7 +50,8 @@ protected:
     mtsVFController *mController;
     mtsVFDataBase mTeleopObjective; // No additional data needed, therefore using mtsVFBase
     mtsVFDataJointLimits mJointLimitsConstraint;
-    mtsVFDataPlane mPlaneConstraint;
+    mtsVFDataPlane mPlaneLeft;
+    mtsVFDataPlane mPlaneRight;
     cisstMesh mMeshFile;
     mtsVFDataMesh mMesh;
     void SetupVF();

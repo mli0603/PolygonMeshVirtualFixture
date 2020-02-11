@@ -106,16 +106,28 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
 //    }
 
     // plane constraint
-    mPlaneConstraint.Name = "PlaneConstraint";
-    mPlaneConstraint.IneqConstraintRows = 1;
-    mPlaneConstraint.Normal.Assign(1.0,0.0,0.0);
-    mPlaneConstraint.PointOnPlane.Assign(0.185, 0.0, 0.0);
-    mPlaneConstraint.NumJoints = mNumJoints;
+    mPlaneLeft.Name = "PlaneConstraintLeft";
+    mPlaneLeft.IneqConstraintRows = 1;
+    mPlaneLeft.Normal.Assign(1.0,0.0,0.0);
+    mPlaneLeft.PointOnPlane.Assign(0.185, 0.0, 0.0);
+    mPlaneLeft.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
-    mPlaneConstraint.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
-    if (!mController->SetVFData(mPlaneConstraint))
+    mPlaneLeft.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
+    if (!mController->SetVFData(mPlaneLeft))
     {
-        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneConstraint.Name, new mtsVFPlane(mPlaneConstraint.Name, new mtsVFDataPlane(mPlaneConstraint))));
+        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
+    }
+
+    mPlaneRight.Name = "PlaneConstraintRight";
+    mPlaneRight.IneqConstraintRows = 1;
+    mPlaneRight.Normal.Assign(-1.0,0.0,0.0);
+    mPlaneRight.PointOnPlane.Assign(0.215, 0.0, 0.0);
+    mPlaneRight.NumJoints = mNumJoints;
+    // use the names defined above to relate kinematics data
+    mPlaneRight.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
+    if (!mController->SetVFData(mPlaneRight))
+    {
+        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
     }
 
 //    // mesh constraint
@@ -250,4 +262,13 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
 
     // TODO: recompute the skull coordinates
     std::cout << "need to recompute skull coordinates" << std::endl;
+
+    // recompute plane coordinates
+    mPlaneLeft.Normal = transform*mPlaneLeft.Normal;
+    mPlaneLeft.PointOnPlane = transform*mPlaneLeft.PointOnPlane;
+    mPlaneRight.Normal = transform*mPlaneRight.Normal;
+    mPlaneRight.PointOnPlane = transform*mPlaneRight.PointOnPlane;
+
+    // enable constraint motion
+    mConstraintMotionEnabled = true;
 }
