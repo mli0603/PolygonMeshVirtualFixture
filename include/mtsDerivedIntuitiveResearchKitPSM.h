@@ -77,7 +77,6 @@ protected:
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
     bool mConstraintMotionEnabled;
     prmPositionCartesianGet mProxyCartesianPosition;
-    vctFrm4x4 mSkullToPSMTransform;
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedIntuitiveResearchKitPSM);

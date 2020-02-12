@@ -114,17 +114,24 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
 //    }
 
     // mesh constraint
-    mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL",true);
-    mMesh.Name = "Mesh";
-    mMesh.BoundingDistance = 0.010; // bounding distance 1cm for intersection detection
-    mMesh.NumJoints = mNumJoints;
-    mMesh.KinNames.clear(); // sanity
-    // use the names defined above to relate kinematics data
-    mMesh.KinNames.push_back("MeasuredKinematics");
+    if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/USAblation/mesh/Skull.STL",true)==-1){
+        CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
+        cmnThrow("Cannot load STL file");
+    }
+    else{
+        mMesh.Name = "Mesh";
+        mMesh.NumTrianglesInNode = 5;
+        mMesh.DiagonalDistanceOfNode = 0.005; // divide a node whenver distance has reached
+        mMesh.BoundingDistance = 0.005; // bounding distance for intersection detection
+        mMesh.NumJoints = mNumJoints;
+        mMesh.KinNames.clear(); // sanity
+        // use the names defined above to relate kinematics data
+        mMesh.KinNames.push_back("MeasuredKinematics");
 
-    if (!mController->SetVFData(mMesh))
-    {
-        mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, new mtsVFDataMesh(mMesh), mMeshFile)));
+        if (!mController->SetVFData(mMesh))
+        {
+            mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, new mtsVFDataMesh(mMesh), mMeshFile)));
+        }
     }
 }
 
@@ -243,10 +250,9 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
 {
     std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
 
-    mSkullToPSMTransform.Assign(transform);
-
     // recompute skull coordinates
-    mMeshFile.TransformTriangle(mSkullToPSMTransform);
+    mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+    meshConstraint->TransformMesh(transform,mMeshFile);
 
     // recompute plane coordinates
     mPlaneLeft.Normal = transform*mPlaneLeft.Normal;

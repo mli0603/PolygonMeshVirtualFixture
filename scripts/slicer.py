@@ -49,7 +49,8 @@ class RegistrationObject():
         self.pose = np.empty([self.num_fiducials, self.num_data, 4, 4]).astype(np.float64)
         self.registration_point = np.empty([self.num_fiducials,3])
 
-        if args.sr:
+        self.args = args
+        if self.args.sr:
             self.curr_location = self.num_fiducials
         else:
             self.curr_location = 0
@@ -147,7 +148,8 @@ class RegistrationObject():
 
         rate = rospy.Rate(10)  # 10Hz
 
-        printMenu()
+        if not self.args.sr:
+            printMenu()
 
         while not rospy.is_shutdown():
             if isData():
