@@ -17,6 +17,12 @@
                     "ros_type": "geometry_msgs::Transform",
                     "mts_function": "SetSkullToPSMTransform",
                     "topic_name": "/Transform/skull_to_psm"
+                },
+                {
+                    "cisst_type": "bool",
+                    "ros_type": "std_msgs::Bool",
+                    "mts_function": "SetSimulation",
+                    "topic_name": "/PSM2/set_simulation"
                 }
             ]
         }
