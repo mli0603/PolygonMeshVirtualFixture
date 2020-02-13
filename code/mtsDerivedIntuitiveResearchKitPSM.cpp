@@ -110,26 +110,26 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneLeft.Name = "PlaneConstraintLeft";
     mPlaneLeft.IneqConstraintRows = 1;
     mPlaneLeft.Normal.Assign(1.0,0.0,0.0);
-    mPlaneLeft.PointOnPlane.Assign(0.185, 0.0, 0.0);
+    mPlaneLeft.PointOnPlane.Assign(60.0, 0.0, 60.0).Multiply(cmn_mm);
     mPlaneLeft.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneLeft.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
-//    if (!mController->SetVFData(mPlaneLeft))
-//    {
-//        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
-//    }
+    if (!mController->SetVFData(mPlaneLeft))
+    {
+        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
+    }
 
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
     mPlaneRight.Normal.Assign(-1.0,0.0,0.0);
-    mPlaneRight.PointOnPlane.Assign(0.215, 0.0, 0.0);
+    mPlaneRight.PointOnPlane.Assign(75.0, 0.0, 60.0);
     mPlaneRight.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneRight.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
-//    if (!mController->SetVFData(mPlaneRight))
-//    {
-//        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
-//    }
+    if (!mController->SetVFData(mPlaneRight))
+    {
+        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
+    }
 
     // mesh constraint
     if (mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL",true)==-1){
