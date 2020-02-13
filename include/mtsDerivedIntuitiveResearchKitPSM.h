@@ -46,10 +46,14 @@ public:
     void Configure(const std::string & filename) override;
 
 protected:
+    // function override
+    void ControlPositionCartesian() override;
+    void GetRobotData() override;
+
     // constraint controller
     mtsVFController *mController;
     mtsVFDataBase mTeleopObjective; // No additional data needed, therefore using mtsVFBase
-    mtsVFDataJointLimits mJointLimitsConstraint;
+    mtsVFDataJointLimits mJointIncLimitsConstraint;
     mtsVFDataPlane mPlaneLeft;
     mtsVFDataPlane mPlaneRight;
     cisstMesh mMeshFile;
@@ -66,10 +70,6 @@ protected:
 
     nmrConstraintOptimizer::STATUS Solve(vctDoubleVec & dq);
     void UpdateOptimizerKinematics();
-
-    // function override
-    void ControlPositionCartesian() override;
-    void GetRobotData() override;
 
     // provide interfaces
     virtual void SetConstraintMotionEnable(const bool & status);

@@ -88,6 +88,24 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
         mController->VFMap.insert(std::pair<std::string,mtsVFFollow *>(mTeleopObjective.Name,new mtsVFFollow(mTeleopObjective.Name,new mtsVFDataBase(mTeleopObjective))));
     }
 
+    // joint limit constraint
+    mJointIncLimitsConstraint.Name = "Joint Increment Limit";
+    mJointIncLimitsConstraint.IneqConstraintRows = 2 * mNumJoints;
+    mJointIncLimitsConstraint.AbsoluteLimit = false;
+    mJointIncLimitsConstraint.UpperLimits.SetSize(mNumJoints);
+    mJointIncLimitsConstraint.UpperLimits.Assign(0.019,0.027,0.00072,0.085,0.075,0.082);
+    mJointIncLimitsConstraint.LowerLimits.SetSize(mNumJoints);
+    mJointIncLimitsConstraint.LowerLimits.Assign(mJointIncLimitsConstraint.UpperLimits).Multiply(-1.0);
+    mJointIncLimitsConstraint.KinNames.clear(); // sanity
+    // use the names defined above to relate kinematics data
+    mJointIncLimitsConstraint.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFLimitsConstraint.cpp
+    if (!mController->SetVFData(mJointIncLimitsConstraint))
+    {
+        // Adds a new virtual fixture to the active vector
+        mController->VFMap.insert(std::pair<std::string,mtsVFLimitsConstraint *>(mJointIncLimitsConstraint.Name,new mtsVFLimitsConstraint(mJointIncLimitsConstraint.Name,new mtsVFDataJointLimits(mJointIncLimitsConstraint))));
+    }
+
+
     // plane constraint
     mPlaneLeft.Name = "PlaneConstraintLeft";
     mPlaneLeft.IneqConstraintRows = 1;
@@ -114,7 +132,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
 //    }
 
     // mesh constraint
-    if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/USAblation/mesh/Skull.STL",true)==-1){
+    if (mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL",true)==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
     }
@@ -196,16 +214,15 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
             vctDoubleVec jointPosition(StateJointKinematics.Position());
 
             // numerical solve
-            vctDoubleVec jointIncrement;
-            nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointIncrement);
+            vctDoubleVec jointInc;
+            nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointInc);
             if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
                 // finally send new joint values
-                SetPositionJointLocal(jointPosition+jointIncrement);
+                SetPositionJointLocal(jointPosition+jointInc);
             }
             else{
-                std::cout << optimizerStatus << std::endl;
-                std::cout << "No solution found" << std::endl;
-                std::cout << optimizerStatus << std::endl;
+                CMN_LOG_CLASS_RUN_ERROR << "Constraint optimization error: No solution found" << std::endl;
+                CMN_LOG_CLASS_RUN_ERROR << optimizerStatus << std::endl;
             }
 
 //            vctDoubleVec dx(CartesianPositionFrm.Translation()-CartesianGet.Translation());
@@ -248,18 +265,29 @@ void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status)
 
 void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &transform)
 {
-    std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
+    if (!mConstraintMotionEnabled && mPowered){ // register when the constraint motion is not enabled (prevent receiving multiple times) and when the arm is powered
+        std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
 
-    // recompute skull coordinates
-    mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
-    meshConstraint->TransformMesh(transform,mMeshFile);
+        // recompute skull coordinates
+        mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+        meshConstraint->TransformMesh(transform,mMeshFile);
 
-    // recompute plane coordinates
-    mPlaneLeft.Normal = transform*mPlaneLeft.Normal;
-    mPlaneLeft.PointOnPlane = transform*mPlaneLeft.PointOnPlane;
-    mPlaneRight.Normal = transform*mPlaneRight.Normal;
-    mPlaneRight.PointOnPlane = transform*mPlaneRight.PointOnPlane;
+        // recompute plane coordinates
+        mPlaneLeft.Normal = transform*mPlaneLeft.Normal;
+        mPlaneLeft.PointOnPlane = transform*mPlaneLeft.PointOnPlane;
+        mPlaneRight.Normal = transform*mPlaneRight.Normal;
+        mPlaneRight.PointOnPlane = transform*mPlaneRight.PointOnPlane;
 
-    // enable constraint motion
-    mConstraintMotionEnabled = true;
+        // enable constraint motion
+        mConstraintMotionEnabled = true;
+    }
+    else{
+        if (mConstraintMotionEnabled){
+            CMN_LOG_CLASS_RUN_ERROR << "Constraint motion already enabled, reset the flag to receive new registration" << std::endl;
+        }
+        if (!mPowered){
+            CMN_LOG_CLASS_RUN_ERROR << "Arm is not powered" << std::endl;
+        }
+
+    }
 }

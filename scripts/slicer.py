@@ -52,6 +52,7 @@ class RegistrationObject():
         self.args = args
         if self.args.sr:
             self.curr_location = self.num_fiducials
+            self.finished = True
         else:
             self.curr_location = 0
         
@@ -113,7 +114,7 @@ class RegistrationObject():
         self.igtl_point_pub.publish(msg)
 
     def transformCallback(self, data):
-        if data.name == "Skull To PSM":
+        if data.name == "Skull To PSM" and self.finished:
             t = data.transform
             
             t.translation.x = data.transform.translation.x / m_to_mm
