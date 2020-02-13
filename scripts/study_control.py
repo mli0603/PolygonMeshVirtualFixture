@@ -81,6 +81,12 @@ class StudyControl:
         p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         p.wait(4.0)
 
+    def enable_simulation(self):
+        print ("enable_simulation")
+        command = 'rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"'
+        p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        p.wait(4.0)
+
     def move_robot_to_start(self):
         print ("move_robot_to_start")
         # switch to teleop mode
@@ -119,6 +125,7 @@ user_options = ['Quit',
                 'Print Options',
                 'Enable Constraint Motion',
                 'Disable Constraint Motion',
+                'Enable Simulation',
                 'Move Robot to Start',
                 'Teleop',
                 'VF + Teleop',
@@ -140,10 +147,11 @@ functional_calls ={0 : quit,
                    1 : print_options,
                    2 : StudyControl.enable_constraint_motion,
                    3 : StudyControl.disable_constraint_motion,
-                   4 : StudyControl.move_robot_to_start,
-                   5 : StudyControl.teleop_control,
-                   6 : StudyControl.teleop_control_vf,
-                   7 : StudyControl.stop_recording}
+                   4 : StudyControl.enable_simulation,
+                   5 : StudyControl.move_robot_to_start,
+                   6 : StudyControl.teleop_control,
+                   7 : StudyControl.teleop_control_vf,
+                   8 : StudyControl.stop_recording}
 
 
 inputs_needed ={0 : 0,
@@ -153,7 +161,8 @@ inputs_needed ={0 : 0,
                 4 : 1,
                 5 : 1,
                 6 : 1,
-                7 : 1}
+                7 : 1,
+                8 : 1}
 
 
 def main():

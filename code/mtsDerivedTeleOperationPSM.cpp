@@ -80,8 +80,13 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
 
     // ignore jaw
     mIgnoreJaw = true;
+
+    // lock rotation and skip aligning MTM
+    mRotationLocked = true;
+    mAlignMTM = false;
+
     elasticityGain.Assign(1.0,1.0,1.0);
-    elasticityGain.Multiply(100.0);
+    elasticityGain.Multiply(150.0);
 }
 
 void mtsDerivedTeleOperationPSM::EnterEnabled(void)

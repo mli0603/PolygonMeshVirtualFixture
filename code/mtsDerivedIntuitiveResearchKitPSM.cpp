@@ -49,6 +49,8 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
             derivedRosInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable, this, "ReadConstraintMotionEnable");
             // set constraint motion status
             derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
+            // set simulation status
+            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSimulation, this, "SetSimulation");
             // read proxy location
             derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCartesianPosition, "GetProxyPositionCartesian");
             // set skull to psm transform
@@ -122,7 +124,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
     mPlaneRight.Normal.Assign(-1.0,0.0,0.0);
-    mPlaneRight.PointOnPlane.Assign(75.0, 0.0, 60.0);
+    mPlaneRight.PointOnPlane.Assign(75.0, 0.0, 60.0).Multiply(cmn_mm);
     mPlaneRight.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneRight.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
@@ -263,9 +265,14 @@ void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status)
     status = mConstraintMotionEnabled;
 }
 
+void mtsDerivedIntuitiveResearchKitPSM::SetSimulation(const bool &status)
+{
+    mSimulated = status;
+}
+
 void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &transform)
 {
-    if (!mConstraintMotionEnabled && mPowered){ // register when the constraint motion is not enabled (prevent receiving multiple times) and when the arm is powered
+    if (!mConstraintMotionEnabled && (mPowered || mSimulated)){ // register when the constraint motion is not enabled (prevent receiving multiple times) and when the arm is powered
         std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
 
         // recompute skull coordinates
@@ -273,10 +280,15 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
         meshConstraint->TransformMesh(transform,mMeshFile);
 
         // recompute plane coordinates
-        mPlaneLeft.Normal = transform*mPlaneLeft.Normal;
+        mtsVFPlane* PlaneLeftVF = reinterpret_cast<mtsVFPlane*>(mController->VFMap.find(mPlaneLeft.Name)->second);
+        mPlaneLeft.Normal = transform.Rotation()*mPlaneLeft.Normal;
         mPlaneLeft.PointOnPlane = transform*mPlaneLeft.PointOnPlane;
-        mPlaneRight.Normal = transform*mPlaneRight.Normal;
+        PlaneLeftVF->Data = &mPlaneLeft;
+
+        mtsVFPlane* PlaneRightVF = reinterpret_cast<mtsVFPlane*>(mController->VFMap.find(mPlaneRight.Name)->second);
+        mPlaneRight.Normal = transform.Rotation()*mPlaneRight.Normal;
         mPlaneRight.PointOnPlane = transform*mPlaneRight.PointOnPlane;
+        PlaneRightVF->Data = &mPlaneRight;
 
         // enable constraint motion
         mConstraintMotionEnabled = true;

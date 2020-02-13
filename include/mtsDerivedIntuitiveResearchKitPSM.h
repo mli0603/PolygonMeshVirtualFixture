@@ -74,8 +74,10 @@ protected:
     // provide interfaces
     virtual void SetConstraintMotionEnable(const bool & status);
     virtual void ReadConstraintMotionEnable(bool & status) const;
+    virtual void SetSimulation(const bool & status);
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
     bool mConstraintMotionEnabled;
+    bool mSimulated;
     prmPositionCartesianGet mProxyCartesianPosition;
 };
 
