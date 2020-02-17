@@ -6,7 +6,7 @@
         "joints": [
             {
                 "name": "outer_roll",
-                "alpha":  0.0000, "A":  0.0000, "theta":  0.0000, "D":  0.4162,// disk1 frm3 to roll center frm4
+                "alpha":  0.0000, "A":  0.0000, "theta":  0.0000, "D":  0.3670,// disk1 frm3 to roll center frm4
                 "type": "revolute",
                 "mode": "active",
                 "offset":  0.0000,
@@ -35,6 +35,13 @@
                 "ftmax": 0.20
             }
         ]
+    }
+    ,
+    "jaw" : {
+        // for last joint, manual says [0, 30] but we need -20 to allow stronger torque, 80 to open wide
+        "qmin": -0.349066, // -20 degrees
+        "qmax":  1.39626,  //  80 degrees
+        "ftmax": 0.16
     }
     ,
     // rotation to match ISI convention (for read-only research API on commercial da Vinci), frame6 to frame7
