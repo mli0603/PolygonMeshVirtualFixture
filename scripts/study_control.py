@@ -81,6 +81,18 @@ class StudyControl:
         p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         p.wait(4.0)
 
+    def disable_gravity_compensation(self):
+        print ("disable_gravity_compensation")
+        command = 'rostopic pub -1 /MTMR/set_gravity_compensation std_msgs/Bool "data: false"'
+        p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        p.wait(4.0)
+
+    def enable_gravity_compensation(self):
+        print ("enable_gravity_compensation")
+        command = 'rostopic pub -1 /MTMR/set_gravity_compensation std_msgs/Bool "data: true"'
+        p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        p.wait(4.0)
+
     def enable_simulation(self):
         print ("enable_simulation")
         command = 'rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"'
@@ -97,11 +109,13 @@ class StudyControl:
 
     def teleop_control(self):
         self.disable_constraint_motion()
+        self.disable_gravity_compensation()
         print ("teleop")
         self.recorder.new_recording('',method='teleop')
 
     def teleop_control_vf(self):
         self.enable_constraint_motion()
+        self.enable_gravity_compensation()
         print ("teleop with vf")
         self.recorder.new_recording('',method='teleop_vf')
         
