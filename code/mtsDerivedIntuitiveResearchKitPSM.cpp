@@ -115,7 +115,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneLeft.Name = "PlaneConstraintLeft";
     mPlaneLeft.IneqConstraintRows = 1;
     mPlaneLeft.Normal.Assign(1.0,0.0,0.0);
-    mPlaneLeft.PointOnPlane.Assign(67.0, 0.0, 60.0).Multiply(cmn_mm);
+    mPlaneLeft.PointOnPlane.Assign(66.625, 0.0, 60.0).Multiply(cmn_mm);
 //    mPlaneLeft.PointOnPlane.Assign(0.185, 0.0, 0.0); // defined in PSM frame, for debugging
     mPlaneLeft.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
@@ -135,7 +135,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
     mPlaneRight.Normal.Assign(-1.0,0.0,0.0);
-    mPlaneRight.PointOnPlane.Assign(68.0, 0.0, 60.0).Multiply(cmn_mm);
+    mPlaneRight.PointOnPlane.Assign(67.625, 0.0, 60.0).Multiply(cmn_mm);
 //    mPlaneRight.PointOnPlane.Assign(0.215, 0.0, 0.0); // defined in PSM frame, for debugging
     mPlaneRight.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
