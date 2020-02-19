@@ -70,6 +70,8 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
                               PSMGetVelocityCartesian);
     interfacePSM->AddFunction("SetConstraintMotionEnable",
                               PSMSetConstraintMotionEnable);
+    interfacePSM->AddFunction("GetSlackForceDirection",
+                              PSMGetSlackForceDirection);
 
     // Same for MTM
     mtsInterfaceRequired * interfaceMTM = GetInterfaceRequired("MTM");
@@ -85,8 +87,8 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
     mRotationLocked = true;
     mAlignMTM = false;
 
-    elasticityGain.Assign(1.0,1.0,1.0);
-    elasticityGain.Multiply(150.0);
+    elasticityGain.Assign(1.0,1.0,1.0).Multiply(150.0);
+    elasticityGainSlackForce.Assign(1.0,1.0,1.0).Multiply(1000.0);
 }
 
 void mtsDerivedTeleOperationPSM::EnterEnabled(void)
@@ -133,13 +135,22 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
             psmCartesianGoal.Translation().Assign(psmTranslation);
             psmCartesianGoal.Rotation().FromNormalized(psmRotation);
 
+            // proxy force
             prmPositionCartesianGet psmMeasuredCartesian;
             mPSM.GetPositionCartesian(psmMeasuredCartesian);
-            vct3 diff = psmCartesianGoal.Translation() - psmMeasuredCartesian.Position().Translation();
+            vct3 diff = psmMeasuredCartesian.Position().Translation() - psmCartesianGoal.Translation();
             vct3 force;
             for (size_t i=0 ; i < 3; i++){
-                force[i] = - elasticityGain[i] * diff[i];
+                force[i] = elasticityGain[i] * diff[i];
             }
+
+            // slack force
+            vct3 slackForce;
+            PSMGetSlackForceDirection(slackForce);
+            for (size_t i=0 ; i < 3; i++){
+                force[i] += elasticityGainSlackForce[i] * slackForce[i];
+            }
+
             // Re-orient based on rotation between MTM and PSM
             force = mRegistrationRotation.Inverse() * force;
             // set force to MTM

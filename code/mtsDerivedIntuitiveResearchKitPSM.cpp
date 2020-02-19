@@ -66,6 +66,7 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
         // teleop needs to tell us if constraint motion is enabled or not
         CMN_ASSERT(RobotInterface);
         RobotInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
+        RobotInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::GetSlackVector, this, "GetSlackForceDirection");
     }
 }
 
@@ -108,14 +109,24 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     }
 
 
+    /****** The following are defined in the skull coordinate frame, which will be transformed into PSM coordinate frame *******/
+
     // plane constraint
     mPlaneLeft.Name = "PlaneConstraintLeft";
     mPlaneLeft.IneqConstraintRows = 1;
     mPlaneLeft.Normal.Assign(1.0,0.0,0.0);
-    mPlaneLeft.PointOnPlane.Assign(60.0, 0.0, 60.0).Multiply(cmn_mm);
+    mPlaneLeft.PointOnPlane.Assign(67.0, 0.0, 60.0).Multiply(cmn_mm);
+//    mPlaneLeft.PointOnPlane.Assign(0.185, 0.0, 0.0); // defined in PSM frame, for debugging
     mPlaneLeft.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneLeft.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
+    // slack
+    mPlaneLeft.NumSlacks = mPlaneLeft.IneqConstraintRows;
+    mPlaneLeft.SlackCosts.SetSize(mPlaneLeft.NumSlacks);
+    mPlaneLeft.SlackCosts.Assign(vctDouble1(1.0));
+    mPlaneLeft.SlackLimits.SetSize(mPlaneLeft.NumSlacks);
+    mPlaneLeft.SlackLimits.Assign(vctDouble1(1.0*cmn_mm)); // allow travel for 1 mm
+    // add
     if (!mController->SetVFData(mPlaneLeft))
     {
         mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
@@ -124,14 +135,24 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
     mPlaneRight.Normal.Assign(-1.0,0.0,0.0);
-    mPlaneRight.PointOnPlane.Assign(75.0, 0.0, 60.0).Multiply(cmn_mm);
+    mPlaneRight.PointOnPlane.Assign(68.0, 0.0, 60.0).Multiply(cmn_mm);
+//    mPlaneRight.PointOnPlane.Assign(0.215, 0.0, 0.0); // defined in PSM frame, for debugging
     mPlaneRight.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
     mPlaneRight.KinNames.push_back("MeasuredKinematics"); // need measured kinematics according to mtsVFPlane.cpp
+    // slack
+    mPlaneRight.NumSlacks = mPlaneRight.IneqConstraintRows;
+    mPlaneRight.SlackCosts.SetSize(mPlaneRight.NumSlacks);
+    mPlaneRight.SlackCosts.Assign(vctDouble1(1.0));
+    mPlaneRight.SlackLimits.SetSize(mPlaneRight.NumSlacks);
+    mPlaneRight.SlackLimits.Assign(vctDouble1(1.0*cmn_mm)); // allow travel for 1 mm
+    // add
     if (!mController->SetVFData(mPlaneRight))
     {
         mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
     }
+
+
 
     // mesh constraint
     if (mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL",true)==-1){
@@ -147,6 +168,12 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
         mMesh.KinNames.clear(); // sanity
         // use the names defined above to relate kinematics data
         mMesh.KinNames.push_back("MeasuredKinematics");
+//        // slack
+//        mMesh.EnableSlack = true;
+//        mMesh.SlackCosts.SetSize(1);
+//        mMesh.SlackCosts.Assign(vctDouble1(1.0));
+//        mMesh.SlackLimits.SetSize(1);
+//        mMesh.SlackLimits.Assign(vctDouble1(2.0*cmn_mm)); // allow travel for 2 mm
 
         if (!mController->SetVFData(mMesh))
         {
@@ -169,6 +196,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupRobot()
     mGoalKinematics.Name="GoalKinematics";
 
     mJacobianBodyBase.SetSize(mNumDof,mNumJoints);
+    mJacobianBodyBaseInverse.SetSize(mNumJoints,mNumDof);
 
     mConstraintMotionEnabled = false;
 }
@@ -216,11 +244,12 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
             vctDoubleVec jointPosition(StateJointKinematics.Position());
 
             // numerical solve
-            vctDoubleVec jointInc;
+            vctDoubleVec jointInc, jointSlack;
             nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointInc);
             if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
+                ComputeSlackVector(jointInc,jointSlack);
                 // finally send new joint values
-                SetPositionJointLocal(jointPosition+jointInc);
+                SetPositionJointLocal(jointPosition+jointInc.Ref(mNumDof,0));
             }
             else{
                 CMN_LOG_CLASS_RUN_ERROR << "Constraint optimization error: No solution found" << std::endl;
@@ -302,4 +331,46 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
         }
 
     }
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::GetSlackVector(vct3 &force) const
+{
+    force.Assign(mSlackVector);
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::ComputeSlackVector(vctDoubleVec &jointInc, vctDoubleVec &jointSlack)
+{
+    mSlackVector.Zeros();
+
+    // mesh constraint slack
+    if (mMesh.EnableSlack){
+        mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+        mtsVFDataMesh* meshData = reinterpret_cast<mtsVFDataMesh*>(meshConstraint->Data);
+        size_t i = 2;
+        for (auto it : meshData->ActiveFaceIdx){
+            mSlackVector += jointInc.at(mNumDof+i) * meshConstraint->pTreeMesh->Mesh->activeNormal.at(it);
+            i ++;
+        }
+        // transform jacobian
+        Jacobian::ChangeBase(mJacobianBody,CartesianGet,mJacobianBodyBase);
+        nmrPInverse(mJacobianBodyBase, mJacobianBodyBaseInverse);
+        vctDoubleVec slackCartesian(6,0.0);
+        slackCartesian.Ref(3,0).Assign(mSlackVector);
+        jointSlack.ForceAssign(mJacobianBodyBaseInverse * slackCartesian);
+
+        if (mSlackVector.Norm()>0){
+            CMN_LOG_INIT_ERROR << "Slack from mesh " << mSlackVector << std::endl;
+            CMN_LOG_INIT_ERROR << "Slack from mesh joint " << jointSlack << std::endl;
+        }
+    }
+
+    if (mPlaneLeft.NumSlacks > 0){
+        mSlackVector += jointInc.at(mNumDof) * mPlaneLeft.Normal;
+    }
+    if (mPlaneRight.NumSlacks > 0){
+        mSlackVector += jointInc.at(mNumDof+1) * mPlaneRight.Normal;
+    }
+
+
+
 }

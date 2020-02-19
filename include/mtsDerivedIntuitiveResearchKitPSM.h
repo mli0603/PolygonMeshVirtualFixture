@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-    */
+﻿/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-    */
 /* ex: set filetype=cpp softtabstop=4 shiftwidth=4 tabstop=4 cindent expandtab: */
 
 /*
@@ -66,6 +66,7 @@ protected:
     int mNumDof;
     int mNumJoints;
     vctDoubleMat mJacobianBodyBase;
+    vctDoubleMat mJacobianBodyBaseInverse;
     void SetupRobot();
 
     nmrConstraintOptimizer::STATUS Solve(vctDoubleVec & dq);
@@ -76,9 +77,13 @@ protected:
     virtual void ReadConstraintMotionEnable(bool & status) const;
     virtual void SetSimulation(const bool & status);
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
+    virtual void GetSlackVector(vct3 & force) const;
     bool mConstraintMotionEnabled;
     bool mSimulated;
     prmPositionCartesianGet mProxyCartesianPosition;
+    vct3 mSlackVector;
+
+    void ComputeSlackVector(vctDoubleVec& jointInc, vctDoubleVec& jointSlack);
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedIntuitiveResearchKitPSM);
