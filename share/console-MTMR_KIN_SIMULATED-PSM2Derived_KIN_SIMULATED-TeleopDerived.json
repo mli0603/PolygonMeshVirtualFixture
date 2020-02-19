@@ -11,7 +11,7 @@
                 "class-name": "mtsDerivedTeleOperationPSM",
                 "constructor-arg": {
                     "Name": "MTMR-PSM2",
-                    "Period": 0.001
+                    "Period": 0.1
                 }
             }
             ,
@@ -20,7 +20,7 @@
                 "class-name": "mtsDerivedIntuitiveResearchKitPSM",
                 "constructor-arg": {
                     "Name": "PSM2",
-                    "Period": 0.001
+                    "Period": 0.1
                 }
             }
             ,

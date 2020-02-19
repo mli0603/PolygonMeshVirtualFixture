@@ -6,7 +6,7 @@
         "joints": [
             {
                 "name": "outer_roll",
-                "alpha":  0.0000, "A":  0.0000, "theta":  0.0000, "D":  0.3670,// disk1 frm3 to roll center frm4
+                "alpha":  0.0000, "A":  0.0000, "theta":  0.0000, "D":  0.36707,// disk1 frm3 to roll center frm4
                 "type": "revolute",
                 "mode": "active",
                 "offset":  0.0000,
