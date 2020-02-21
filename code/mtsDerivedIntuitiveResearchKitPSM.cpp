@@ -155,8 +155,8 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     }
 
 
-
     // mesh constraint
+    mMeshFile = cisstMesh(1); // 1mm robot error
     if (mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL",true)==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
