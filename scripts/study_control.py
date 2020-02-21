@@ -93,6 +93,18 @@ class StudyControl:
         p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         p.wait(4.0)
 
+    def disable_mesh_constraint(self):
+        print ("disable_mesh_constraint")
+        command = 'rostopic pub -1 /PSM2/mesh_constraint_status_set std_msgs/Bool "data: false"'
+        p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        p.wait(4.0)
+
+    def enable_mesh_constraint(self):
+        print ("enable_mesh_constraint")
+        command = 'rostopic pub -1 /PSM2/mesh_constraint_status_set std_msgs/Bool "data: true"'
+        p = subprocess.Popen(command, shell=True, executable='/bin/bash', stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        p.wait(4.0)
+
     def enable_simulation(self):
         print ("enable_simulation")
         command = 'rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"'
@@ -139,8 +151,9 @@ user_options = ['Quit',
                 'Print Options',
                 'Enable Constraint Motion',
                 'Disable Constraint Motion',
+                'Enable Mesh Constraint',
+                'Disable Mesh Constraint',
                 'Enable Simulation',
-                'Move Robot to Start',
                 'Teleop',
                 'VF + Teleop',
                 'Stop Recording']   
@@ -161,11 +174,12 @@ functional_calls ={0 : quit,
                    1 : print_options,
                    2 : StudyControl.enable_constraint_motion,
                    3 : StudyControl.disable_constraint_motion,
-                   4 : StudyControl.enable_simulation,
-                   5 : StudyControl.move_robot_to_start,
-                   6 : StudyControl.teleop_control,
-                   7 : StudyControl.teleop_control_vf,
-                   8 : StudyControl.stop_recording}
+                   4 : StudyControl.enable_mesh_constraint,
+                   5 : StudyControl.disable_mesh_constraint,
+                   6 : StudyControl.enable_simulation,
+                   7 : StudyControl.teleop_control,
+                   8 : StudyControl.teleop_control_vf,
+                   9 : StudyControl.stop_recording}
 
 
 inputs_needed ={0 : 0,
@@ -176,7 +190,8 @@ inputs_needed ={0 : 0,
                 5 : 1,
                 6 : 1,
                 7 : 1,
-                8 : 1}
+                8 : 1,
+                9 : 1,}
 
 
 def main():

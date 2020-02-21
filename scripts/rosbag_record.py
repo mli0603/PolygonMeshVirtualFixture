@@ -59,7 +59,7 @@ class RosbagRecord:
 
     def start_recording(self,method='all'):
         record_command = 'rosbag record -q --split --duration=4m '
-        record_command = record_command + '-e "' + self.master + '/(.*)" -e "'+ self.slave + '/(.*)" -e "'+ self.slave + '_Proxy/(.*)"' 
+        record_command = record_command + '-e "' + self.master + '/(.*)" -e "'+ self.slave + '/(.*)" -e "'+ self.slave + '_Proxy/(.*)" -e "/Transform/(.*)"' 
         
         if not os.path.exists(self.foldername):
             os.makedirs(self.foldername)

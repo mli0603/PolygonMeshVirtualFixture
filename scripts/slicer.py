@@ -55,8 +55,28 @@ class RegistrationObject():
             self.finished = True
         else:
             self.curr_location = 0
+            self.finished = False
         
         self.counter = 0
+
+        rospy.init_node('ds_registration', anonymous=True)
+        # publish to slicer
+        self.igtl_pointcloud_pub = rospy.Publisher(
+            '/IGTL_POINTCLOUD_OUT', igtlpointcloud, queue_size=1, latch=True)
+        self.igtl_point_pub = rospy.Publisher(
+            '/IGTL_POINT_OUT', igtlpoint, queue_size=1, latch=True)
+
+        # publish to robot
+        self.transform_pub = rospy.Publisher(
+            '/Transform/skull_to_psm', Transform, queue_size=1, latch=True)
+        # subscribe to robot ee location
+        sub_measured = rospy.Subscriber('/PSM2/position_cartesian_current',
+                               PoseStamped, self.measuredCPCallBack)
+        sub_servo = rospy.Subscriber('PSM2_Proxy/position_cartesian_current',
+                               PoseStamped, self.servoCPCallBack)
+        transform_sub = rospy.Subscriber(
+            '/IGTL_TRANSFORM_IN', igtltransform, self.transformCallback)
+
         
     
     def measuredCPCallBack(self, data):
@@ -128,24 +148,7 @@ class RegistrationObject():
             print('Transformation received: ', t)
 
     def registration(self):
-        rospy.init_node('ds_registration', anonymous=True)
-
-        # subscribe to robot ee location
-        sub_measured = rospy.Subscriber('/PSM2/position_cartesian_current',
-                               PoseStamped, self.measuredCPCallBack)
-        sub_servo = rospy.Subscriber('PSM2_Proxy/position_cartesian_current',
-                               PoseStamped, self.servoCPCallBack)
-        transform_sub = rospy.Subscriber(
-            '/IGTL_TRANSFORM_IN', igtltransform, self.transformCallback)
-        # publish to slicer
-        self.igtl_pointcloud_pub = rospy.Publisher(
-            '/IGTL_POINTCLOUD_OUT', igtlpointcloud, queue_size=1, latch=True)
-        self.igtl_point_pub = rospy.Publisher(
-            '/IGTL_POINT_OUT', igtlpoint, queue_size=1, latch=True)
-
-        # publish to robot
-        self.transform_pub = rospy.Publisher(
-            '/Transform/skull_to_psm', Transform, queue_size=1, latch=True)
+        
 
         rate = rospy.Rate(10)  # 10Hz
 
