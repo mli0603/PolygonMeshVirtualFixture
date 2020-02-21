@@ -55,6 +55,8 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
             derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCartesianPosition, "GetProxyPositionCartesian");
             // set skull to psm transform
             derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
+            // set mesh constraint enable
+            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetMeshConstraintEnable, this, "SetMeshConstraintEnable");
         }
     }
     else{
@@ -115,7 +117,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneLeft.Name = "PlaneConstraintLeft";
     mPlaneLeft.IneqConstraintRows = 1;
     mPlaneLeft.Normal.Assign(1.0,0.0,0.0);
-    mPlaneLeft.PointOnPlane.Assign(66.625, 0.0, 60.0).Multiply(cmn_mm);
+    mPlaneLeft.PointOnPlane.Assign(65.625, 0.0, 60.0).Multiply(cmn_mm);
 //    mPlaneLeft.PointOnPlane.Assign(0.185, 0.0, 0.0); // defined in PSM frame, for debugging
     mPlaneLeft.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
@@ -135,7 +137,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
     mPlaneRight.Normal.Assign(-1.0,0.0,0.0);
-    mPlaneRight.PointOnPlane.Assign(67.625, 0.0, 60.0).Multiply(cmn_mm);
+    mPlaneRight.PointOnPlane.Assign(68.625, 0.0, 60.0).Multiply(cmn_mm);
 //    mPlaneRight.PointOnPlane.Assign(0.215, 0.0, 0.0); // defined in PSM frame, for debugging
     mPlaneRight.NumJoints = mNumJoints;
     // use the names defined above to relate kinematics data
@@ -247,7 +249,6 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
             vctDoubleVec jointInc, jointSlack;
             nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointInc);
             if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
-                ComputeSlackVector(jointInc,jointSlack);
                 // finally send new joint values
                 SetPositionJointLocal(jointPosition+jointInc.Ref(mNumDof,0));
             }
@@ -292,6 +293,13 @@ void mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable(const bool &st
 void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status) const
 {
     status = mConstraintMotionEnabled;
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::SetMeshConstraintEnable(const bool &status)
+{
+    mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+    meshConstraint->Data->Active = status;
+    std::cout << "Mesh constraint state is " << meshConstraint->Data->Active << std::endl;
 }
 
 void mtsDerivedIntuitiveResearchKitPSM::SetSimulation(const bool &status)
@@ -342,27 +350,27 @@ void mtsDerivedIntuitiveResearchKitPSM::ComputeSlackVector(vctDoubleVec &jointIn
 {
     mSlackVector.Zeros();
 
-    // mesh constraint slack
-    if (mMesh.EnableSlack){
-        mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
-        mtsVFDataMesh* meshData = reinterpret_cast<mtsVFDataMesh*>(meshConstraint->Data);
-        size_t i = 2;
-        for (auto it : meshData->ActiveFaceIdx){
-            mSlackVector += jointInc.at(mNumDof+i) * meshConstraint->pTreeMesh->Mesh->activeNormal.at(it);
-            i ++;
-        }
-        // transform jacobian
-        Jacobian::ChangeBase(mJacobianBody,CartesianGet,mJacobianBodyBase);
-        nmrPInverse(mJacobianBodyBase, mJacobianBodyBaseInverse);
-        vctDoubleVec slackCartesian(6,0.0);
-        slackCartesian.Ref(3,0).Assign(mSlackVector);
-        jointSlack.ForceAssign(mJacobianBodyBaseInverse * slackCartesian);
+//    // mesh constraint slack
+//    if (mMesh.EnableSlack){
+//        mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+//        mtsVFDataMesh* meshData = reinterpret_cast<mtsVFDataMesh*>(meshConstraint->Data);
+//        size_t i = 2;
+//        for (auto it : meshData->ActiveFaceIdx){
+//            mSlackVector += jointInc.at(mNumDof+i) * meshConstraint->pTreeMesh->Mesh->activeNormal.at(it);
+//            i ++;
+//        }
+//        // transform jacobian
+//        Jacobian::ChangeBase(mJacobianBody,CartesianGet,mJacobianBodyBase);
+//        nmrPInverse(mJacobianBodyBase, mJacobianBodyBaseInverse);
+//        vctDoubleVec slackCartesian(6,0.0);
+//        slackCartesian.Ref(3,0).Assign(mSlackVector);
+//        jointSlack.ForceAssign(mJacobianBodyBaseInverse * slackCartesian);
 
-        if (mSlackVector.Norm()>0){
-            CMN_LOG_INIT_ERROR << "Slack from mesh " << mSlackVector << std::endl;
-            CMN_LOG_INIT_ERROR << "Slack from mesh joint " << jointSlack << std::endl;
-        }
-    }
+//        if (mSlackVector.Norm()>0){
+//            CMN_LOG_INIT_ERROR << "Slack from mesh " << mSlackVector << std::endl;
+//            CMN_LOG_INIT_ERROR << "Slack from mesh joint " << jointSlack << std::endl;
+//        }
+//    }
 
     if (mPlaneLeft.NumSlacks > 0){
         mSlackVector += jointInc.at(mNumDof) * mPlaneLeft.Normal;

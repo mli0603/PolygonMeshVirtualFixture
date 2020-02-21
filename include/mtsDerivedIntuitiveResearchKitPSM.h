@@ -75,6 +75,7 @@ protected:
     // provide interfaces
     virtual void SetConstraintMotionEnable(const bool & status);
     virtual void ReadConstraintMotionEnable(bool & status) const;
+    virtual void SetMeshConstraintEnable(const bool & status);
     virtual void SetSimulation(const bool & status);
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
     virtual void GetSlackVector(vct3 & force) const;
