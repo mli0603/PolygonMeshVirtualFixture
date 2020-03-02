@@ -72,7 +72,11 @@ class RegistrationObject():
         # subscribe to robot ee location
         sub_measured = rospy.Subscriber('/PSM2/position_cartesian_current',
                                PoseStamped, self.measuredCPCallBack)
-        sub_servo = rospy.Subscriber('PSM2_Proxy/position_cartesian_current',
+        sub_measured_simple_robot = rospy.Subscriber('/simple_robot/measured_cp',
+                               PoseStamped, self.measuredCPCallBack)
+        sub_servo = rospy.Subscriber('/PSM2_Proxy/position_cartesian_current',
+                               PoseStamped, self.servoCPCallBack)
+        sub_servo_simple_robot = rospy.Subscriber('/simple_robot/servo_cp',
                                PoseStamped, self.servoCPCallBack)
         transform_sub = rospy.Subscriber(
             '/IGTL_TRANSFORM_IN', igtltransform, self.transformCallback)

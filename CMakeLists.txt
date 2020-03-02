@@ -91,7 +91,14 @@ if (cisst_FOUND)
               "include/mtsDerivedROSBridge.h"
               )
 
+  add_executable(simpleTeleop
+            simulation/main_teleop.cpp
+            simulation/simple_teleop.cpp
+            simulation/simple_teleop.h)
+
   cisst_target_link_libraries (USAblation
+                              ${REQUIRED_CISST_LIBRARIES})
+  cisst_target_link_libraries (simpleTeleop
                               ${REQUIRED_CISST_LIBRARIES})
 
   # link against non cisst libraries and cisst components
@@ -100,8 +107,13 @@ if (cisst_FOUND)
                         ${sawControllers_LIBRARIES}
                         ${sawConstraintController_LIBRARIES}
                         ${cisstICP_LIBRARIES})
+  target_link_libraries (simpleTeleop
+                        ${sawControllers_LIBRARIES}
+                        ${sawConstraintController_LIBRARIES}
+                        ${cisstICP_LIBRARIES}
+                        ${catkin_LIBRARIES})
 
-    configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/USAblationConfig.cmake.in"
-                    "${USAblation_CMAKE_CONFIG_FILE}"
-                    @ONLY)
+  configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/USAblationConfig.cmake.in"
+                  "${USAblation_CMAKE_CONFIG_FILE}"
+                  @ONLY)
 endif (cisst_FOUND)
