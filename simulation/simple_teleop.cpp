@@ -88,32 +88,20 @@ void simpleTeleop::setupVF() {
     // use the names defined above to relate kinematics data
     mTeleopObjective.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFFollow.cpp
     mTeleopObjective.KinNames.push_back("GoalKinematics"); // goal kinematics needs to be second
-
-    // add objective and constraint to optimizer
-    // first, we check if we can set the data. If not, we insert it.
-    if (!mController->SetVFData(mTeleopObjective))
-    {
-        // Adds a new virtual fixture to the active vector
-        mController->VFMap.insert(std::pair<std::string,mtsVFFollow *>(mTeleopObjective.Name,new mtsVFFollow(mTeleopObjective.Name,new mtsVFDataBase(mTeleopObjective))));
-    }
+    mController->AddVFFollow(mTeleopObjective);
 
     // joint limit constraint
-    mJointLimitsConstraint.Name = "Joint Limit";
-    mJointLimitsConstraint.AbsoluteLimit = false;
-    mJointLimitsConstraint.IneqConstraintRows = 2 * mNumJoints;
-    mJointLimitsConstraint.LowerLimits.SetSize(mNumJoints);
-    mJointLimitsConstraint.LowerLimits.Assign(-0.25, -0.25, -0.25, -1.0, -1.0, -1.0).Multiply(1E-3);
-    mJointLimitsConstraint.UpperLimits.SetSize(mNumJoints);
-    mJointLimitsConstraint.UpperLimits.Assign(0.25, 0.25, 0.25, 1.0, 1.0, 1.0).Multiply(1E-3);
-    mJointLimitsConstraint.KinNames.clear(); // sanity
+    mJointIncrementLimits.Name = "Joint Limit";
+    mJointIncrementLimits.AbsoluteLimit = false;
+    mJointIncrementLimits.IneqConstraintRows = 2 * mNumJoints;
+    mJointIncrementLimits.LowerLimits.SetSize(mNumJoints);
+    mJointIncrementLimits.LowerLimits.Assign(-0.25, -0.25, -0.25, -1.0, -1.0, -1.0).Multiply(1E-3);
+    mJointIncrementLimits.UpperLimits.SetSize(mNumJoints);
+    mJointIncrementLimits.UpperLimits.Assign(0.25, 0.25, 0.25, 1.0, 1.0, 1.0).Multiply(1E-3);
+    mJointIncrementLimits.KinNames.clear(); // sanity
     // use the names defined above to relate kinematics data
-    mJointLimitsConstraint.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFLimitsConstraint.cpp
-
-    if (!mController->SetVFData(mJointLimitsConstraint))
-    {
-        // Adds a new virtual fixture to the active vector
-        mController->VFMap.insert(std::pair<std::string,mtsVFLimitsConstraint *>(mJointLimitsConstraint.Name,new mtsVFLimitsConstraint(mJointLimitsConstraint.Name,new mtsVFDataJointLimits(mJointLimitsConstraint))));
-    }
+    mJointIncrementLimits.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFLimitsConstraint.cpp
+    mController->AddVFLimits(mJointIncrementLimits);
 
     // mesh constraint
     mMeshFile = cisstMesh(true); // error in mm
@@ -133,7 +121,7 @@ void simpleTeleop::setupVF() {
 
         if (!mController->SetVFData(mMesh))
         {
-            mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, new mtsVFDataMesh(mMesh), mMeshFile)));
+            mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, &mMesh, mMeshFile)));
         }
     }
 }

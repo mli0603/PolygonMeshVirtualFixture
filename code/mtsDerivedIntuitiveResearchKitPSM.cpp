@@ -84,14 +84,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     // use the names defined above to relate kinematics data
     mTeleopObjective.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFFollow.cpp
     mTeleopObjective.KinNames.push_back("GoalKinematics"); // goal kinematics needs to be second
-
-    // add objective and constraint to optimizer
-    // first, we check if we can set the data. If not, we insert it.
-    if (!mController->SetVFData(mTeleopObjective))
-    {
-        // Adds a new virtual fixture to the active vector
-        mController->VFMap.insert(std::pair<std::string,mtsVFFollow *>(mTeleopObjective.Name,new mtsVFFollow(mTeleopObjective.Name,new mtsVFDataBase(mTeleopObjective))));
-    }
+    mController->AddVFFollow(mTeleopObjective);
 
     // joint limit constraint
     mJointIncLimitsConstraint.Name = "Joint Increment Limit";
@@ -104,11 +97,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mJointIncLimitsConstraint.KinNames.clear(); // sanity
     // use the names defined above to relate kinematics data
     mJointIncLimitsConstraint.KinNames.push_back("MeasuredKinematics"); // measured kinematics needs to be first according to mtsVFLimitsConstraint.cpp
-    if (!mController->SetVFData(mJointIncLimitsConstraint))
-    {
-        // Adds a new virtual fixture to the active vector
-        mController->VFMap.insert(std::pair<std::string,mtsVFLimitsConstraint *>(mJointIncLimitsConstraint.Name,new mtsVFLimitsConstraint(mJointIncLimitsConstraint.Name,new mtsVFDataJointLimits(mJointIncLimitsConstraint))));
-    }
+    mController->AddVFLimits(mJointIncLimitsConstraint);
 
 
     /****** The following are defined in the skull coordinate frame, which will be transformed into PSM coordinate frame *******/
@@ -128,11 +117,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneLeft.SlackCosts.Assign(vctDouble1(1.0));
     mPlaneLeft.SlackLimits.SetSize(mPlaneLeft.NumSlacks);
     mPlaneLeft.SlackLimits.Assign(vctDouble1(1.0*cmn_mm)); // allow travel for 1 mm
-    // add
-    if (!mController->SetVFData(mPlaneLeft))
-    {
-        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneLeft.Name, new mtsVFPlane(mPlaneLeft.Name, new mtsVFDataPlane(mPlaneLeft))));
-    }
+    mController->AddVFPlane(mPlaneLeft);
 
     mPlaneRight.Name = "PlaneConstraintRight";
     mPlaneRight.IneqConstraintRows = 1;
@@ -148,12 +133,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mPlaneRight.SlackCosts.Assign(vctDouble1(1.0));
     mPlaneRight.SlackLimits.SetSize(mPlaneRight.NumSlacks);
     mPlaneRight.SlackLimits.Assign(vctDouble1(1.0*cmn_mm)); // allow travel for 1 mm
-    // add
-    if (!mController->SetVFData(mPlaneRight))
-    {
-        mController->VFMap.insert(std::pair<std::string, mtsVFPlane*>(mPlaneRight.Name, new mtsVFPlane(mPlaneRight.Name, new mtsVFDataPlane(mPlaneRight))));
-    }
-
+    mController->AddVFPlane(mPlaneRight);
 
     // mesh constraint
     mMeshFile = cisstMesh(true);
@@ -170,16 +150,10 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
         mMesh.KinNames.clear(); // sanity
         // use the names defined above to relate kinematics data
         mMesh.KinNames.push_back("MeasuredKinematics");
-//        // slack
-//        mMesh.EnableSlack = true;
-//        mMesh.SlackCosts.SetSize(1);
-//        mMesh.SlackCosts.Assign(vctDouble1(1.0));
-//        mMesh.SlackLimits.SetSize(1);
-//        mMesh.SlackLimits.Assign(vctDouble1(2.0*cmn_mm)); // allow travel for 2 mm
 
         if (!mController->SetVFData(mMesh))
         {
-            mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, new mtsVFDataMesh(mMesh), mMeshFile)));
+            mController->VFMap.insert(std::pair<std::string, mtsVFMesh*>(mMesh.Name, new mtsVFMesh(mMesh.Name, &mMesh, mMeshFile)));
         }
     }
 }
@@ -297,9 +271,8 @@ void mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable(bool &status)
 
 void mtsDerivedIntuitiveResearchKitPSM::SetMeshConstraintEnable(const bool &status)
 {
-    mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
-    meshConstraint->Data->Active = status;
-    std::cout << "Mesh constraint state is " << meshConstraint->Data->Active << std::endl;
+    mMesh.Active = status;
+    std::cout << "Mesh constraint state is " << mMesh.Active << std::endl;
 }
 
 void mtsDerivedIntuitiveResearchKitPSM::SetSimulation(const bool &status)
@@ -317,15 +290,11 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
         meshConstraint->TransformMesh(transform,mMeshFile);
 
         // recompute plane coordinates
-        mtsVFPlane* PlaneLeftVF = reinterpret_cast<mtsVFPlane*>(mController->VFMap.find(mPlaneLeft.Name)->second);
         mPlaneLeft.Normal = transform.Rotation()*mPlaneLeft.Normal;
         mPlaneLeft.PointOnPlane = transform*mPlaneLeft.PointOnPlane;
-        PlaneLeftVF->Data = &mPlaneLeft;
 
-        mtsVFPlane* PlaneRightVF = reinterpret_cast<mtsVFPlane*>(mController->VFMap.find(mPlaneRight.Name)->second);
         mPlaneRight.Normal = transform.Rotation()*mPlaneRight.Normal;
         mPlaneRight.PointOnPlane = transform*mPlaneRight.PointOnPlane;
-        PlaneRightVF->Data = &mPlaneRight;
 
         // enable constraint motion
         mConstraintMotionEnabled = true;

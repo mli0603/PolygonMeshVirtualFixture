@@ -60,7 +60,7 @@ protected:
     prmStateJoint mMeasuredJoint;
     mtsVFDataBase mTeleopObjective; // No additional data needed, therefore using mtsVFBase
     mtsVFDataPlane mPlaneConstraint;
-    mtsVFDataJointLimits mJointLimitsConstraint;
+    mtsVFDataJointLimits mJointIncrementLimits;
     mtsVFDataCylinder mNerveLeft;
     mtsVFDataCylinder mNerveRight;
     // mesh
