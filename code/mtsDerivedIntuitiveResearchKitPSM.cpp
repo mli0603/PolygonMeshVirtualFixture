@@ -69,6 +69,7 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
         CMN_ASSERT(RobotInterface);
         RobotInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
         RobotInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::GetSlackVector, this, "GetSlackForceDirection");
+        RobotInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::GetSimulation, this, "GetSimulation");
     }
 }
 
@@ -136,8 +137,8 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     mController->AddVFPlane(mPlaneRight);
 
     // mesh constraint
-    mMeshFile = cisstMesh(true);
-    if (mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.STL")==-1){
+    mMeshFile = cisstMesh(0.5,true); // 0.5 mm error for PSM
+    if (mMeshFile.LoadMeshFromSTLFile("/home/dvrk-pc/dvrk_ws/src/USAblation/mesh/Skull.stl")==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
     }
@@ -313,6 +314,11 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
 void mtsDerivedIntuitiveResearchKitPSM::GetSlackVector(vct3 &force) const
 {
     force.Assign(mSlackVector);
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::GetSimulation(bool &status) const
+{
+    status = mSimulated;
 }
 
 void mtsDerivedIntuitiveResearchKitPSM::ComputeSlackVector(vctDoubleVec &jointInc, vctDoubleVec &jointSlack)

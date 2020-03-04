@@ -72,6 +72,8 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
                               PSMSetConstraintMotionEnable);
     interfacePSM->AddFunction("GetSlackForceDirection",
                               PSMGetSlackForceDirection);
+    interfacePSM->AddFunction("GetSimulation",
+                              PSMGetSimulation);
 
     // Same for MTM
     mtsInterfaceRequired * interfaceMTM = GetInterfaceRequired("MTM");
@@ -156,9 +158,13 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
             // Re-orient based on rotation between MTM and PSM
             force = mRegistrationRotation.Inverse() * force;
             // set force to MTM
-            prmForceCartesianSet wrenchMTM;
-            wrenchMTM.Force().Ref<3>(0) = force;
-            mMTM.SetWrenchBody(wrenchMTM);
+            bool psmSimulated;
+            PSMGetSimulation(psmSimulated);
+            if (!psmSimulated){
+                prmForceCartesianSet wrenchMTM;
+                wrenchMTM.Force().Ref<3>(0) = force;
+                mMTM.SetWrenchBody(wrenchMTM);
+            }
         }
     }
 }

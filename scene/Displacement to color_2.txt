@@ -1,3 +1,0 @@
-# Color procedural file /home/max/dvrk_ws/src/USAblation/scene/Displacement to color_2.txt
-# 0 points
-# position R G B

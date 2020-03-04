@@ -79,6 +79,7 @@ protected:
     virtual void SetSimulation(const bool & status);
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
     virtual void GetSlackVector(vct3 & force) const;
+    virtual void GetSimulation(bool & status) const;
     bool mConstraintMotionEnabled;
     bool mSimulated;
     prmPositionCartesianGet mProxyCartesianPosition;

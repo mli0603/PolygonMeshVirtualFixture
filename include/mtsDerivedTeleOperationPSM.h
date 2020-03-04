@@ -45,6 +45,7 @@ protected:
     mtsFunctionWrite MTMSetWrenchBodyOrientationAbsolute;
     mtsFunctionWrite PSMSetConstraintMotionEnable;
     mtsFunctionRead  PSMGetSlackForceDirection;
+    mtsFunctionRead  PSMGetSimulation;
 
     vctFrm4x4 mPSMProxyMeasuredCartesianPosition;
     vct3 elasticityGain;
