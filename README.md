@@ -1,5 +1,5 @@
 # PolygonMeshVirtualFixture
-An application of the anatomical mesh-based virtual fixture for dVRK.
+This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to automatically generate complex virtual fixtures for arbitrary geometries given a polygon mesh (STL) file. The framework is applicable to all CISST based robots, and this repo contains a demo of the anatomical mesh-based virtual fixture for dVRK.
 ![](media/demo_gif.gif)
 
 If you use our code, please cite
@@ -26,7 +26,7 @@ If you use our code, please cite
 The demo runs a simple teleoperation that controlled by keyboard presses.
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
-- To control the position, start script by `python scripts/teleop.py` and follow the instruction. 
+- To control the position, start script by `python scripts/teleop.py` and follow the instruction (see figure below). 
 
 ![](media/simple_teleop_keyboard_control.png)
 - To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
@@ -43,11 +43,11 @@ The demo runs a simple teleoperation that controlled by keyboard presses.
 - To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 
 ### Visualization
-- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and spheres. 
+- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servoed position (i.e. commanded position from the MTM or keyboard) and the blue sphere represents the measured position (i.e. actual position with virtual fixture constraints). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture)
 
 ![](media/visualization_slicer.png)
 - Start ROS-IGTL-Bridge by `roslaunch ros_igtl_bridge bridge.launch`. Choose `Server` mode by typing `1`. Use port number `18944`.
-- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status. 
+- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
 
 ![](media/ros_igtl_bridge_active.png)
 - Start script by `python scripts/slicer.py` to convert ros messages to slicer messages. Use default registration by adding `--sr`.
