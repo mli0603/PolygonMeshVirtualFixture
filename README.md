@@ -53,3 +53,6 @@ The demo runs a simple teleoperation that controlled by keyboard presses.
 
 ## Log
 - 2020.07.15: We are working on integrating some of the core components into [JHU-CISST Library](https://github.com/jhu-cisst/cisst) for minimal dependencies.
+
+## Acknowledgement
+Special thanks to [Anton Deguet](https://github.com/adeguet1) for helping open-sourcing the code :)
