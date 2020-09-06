@@ -1,0 +1,28 @@
+set (dvrk_mesh_vf_INCLUDE_DIR "@dvrk_mesh_vf_INCLUDE_DIR@")
+set (dvrk_mesh_vf_LIBRARY_DIR "@dvrk_mesh_vf_LIBRARY_DIR@")
+set (dvrk_mesh_vf_LIBRARIES   "@dvrk_mesh_vf_LIBRARIES@")
+
+# figure out if this file is where it was configured (build tree) or
+# not (installed tree)
+set (dvrk_mesh_vf_CMAKE_CONFIG_FILE "@dvrk_mesh_vf_CMAKE_CONFIG_FILE@")
+get_filename_component (THIS_FILE_PATH
+                        ${CMAKE_CURRENT_LIST_FILE}
+                        REALPATH)
+
+if ("${dvrk_mesh_vf_CMAKE_CONFIG_FILE}" STREQUAL "${THIS_FILE_PATH}")
+  # we're using the build directories
+  set (dvrk_mesh_vf_SOURCE_DIR "@dvrk_mesh_vf_SOURCE_DIR@")
+  set (dvrk_mesh_vf_INCLUDE_DIR "@dvrk_mesh_vf_INCLUDE_DIR@")
+  set (dvrk_mesh_vf_LIBRARY_DIR "@dvrk_mesh_vf_LIBRARY_DIR@")
+else ()
+  # try to find the install dir, we know the install is using
+  # share/dvrk_mesh_vf so we can go ../..
+  set (RELATIVE_INSTALL_DIR "${THIS_FILE_PATH}/../..")
+  get_filename_component (ABSOLUTE_INSTALL_DIR "${RELATIVE_INSTALL_DIR}" ABSOLUTE)
+  # set directories using the install dir
+  set (dvrk_mesh_vf_SOURCE_DIR "${ABSOLUTE_INSTALL_DIR}")
+  set (dvrk_mesh_vf_INCLUDE_DIR "${ABSOLUTE_INSTALL_DIR}/include")
+  set (dvrk_mesh_vf_LIBRARY_DIR "${ABSOLUTE_INSTALL_DIR}/lib")
+endif ()
+
+set (dvrk_mesh_vf_LIBRARIES   "@dvrk_mesh_vf_LIBRARIES@")

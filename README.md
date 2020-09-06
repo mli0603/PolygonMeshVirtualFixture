@@ -1,5 +1,6 @@
 # PolygonMeshVirtualFixture
 An application of the anatomical mesh-based virtual fixture for dVRK.
+![](media/demo_gif.gif)
 
 If you use our code, please cite
 ```
