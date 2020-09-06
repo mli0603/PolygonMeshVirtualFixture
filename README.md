@@ -25,6 +25,7 @@ The demo runs a simple teleoperation that controlled by keyboard presses.
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - To control the position, start script by `python scripts/teleop.py` and follow the instruction. 
+
 ![](media/simple_teleop_keyboard_control.png)
 - To run visualization, please refer to the **Visualization** section below.
 
@@ -33,9 +34,13 @@ The demo runs a simple teleoperation that controlled by keyboard presses.
 - Launch dVRK in simulation by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json`. Optionally, you can visualize the dVRK PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2`.
 - To run visualization, please refer to the **Visualization** section below.
 ### Visualization
-- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and spheres. ![](media/visualization_slicer.png)
+- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and spheres. 
+
+![](media/visualization_slicer.png)
 - Start ROS-IGTL-Bridge by `roslaunch ros_igtl_bridge bridge.launch`. Choose `Server` mode by typing `1`. Use port number `18944`.
-- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status. ![](media/ros_igtl_bridge_active.png)
+- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status. 
+
+![](media/ros_igtl_bridge_active.png)
 - Start script by `python scripts/slicer.py` to convert ros messages to slicer messages. Use default registration by adding `--sr`.
 
 ## Log
