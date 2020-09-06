@@ -24,7 +24,8 @@ If you use our code, please cite
 The demo runs a simple teleoperation that controlled by keyboard presses.
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
-- To control the position, start script by `python scripts/teleop.py` and follow the instruction. ![](media/ros_igtl_bridge_active.png)
+- To control the position, start script by `python scripts/teleop.py` and follow the instruction. 
+![](media/simple_teleop_keyboard_control.png)
 - To run visualization, please refer to the **Visualization** section below.
 
 ### In dVRK simulation
