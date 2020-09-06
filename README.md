@@ -20,19 +20,26 @@ If you use our code, please cite
     3. Then Python dependencies can be installed via `pip install -r scripts/requirements.txt`.
 
 ## To run the demo
-### Simple teleoperation demo
+### Simple teleop simulation
 The demo runs a simple teleoperation that controlled by keyboard presses.
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - To control the position, start script by `python scripts/teleop.py` and follow the instruction. 
 
 ![](media/simple_teleop_keyboard_control.png)
-- To run visualization, please refer to the **Visualization** section below.
+- To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 
-### In dVRK simulation
+### dVRK simulation
 - Start roscore by `roscore`.
 - Launch dVRK in simulation by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json`. Optionally, you can visualize the dVRK PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2`.
-- To run visualization, please refer to the **Visualization** section below.
+- To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
+
+### dVRK
+- Start roscore by `roscore`.
+- Base on the file `share/console-MTMR-PSM2Derived-TeleopDerived.json`, create a configuraiton file that matches your MTMR and PSM2 (or MTML and PSM1) serial number.
+- Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
+- To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
+
 ### Visualization
 - Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and spheres. 
 
