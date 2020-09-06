@@ -1,12 +1,11 @@
 <package>
-  <name>USAblation</name>
-  <version>1.7.1</version>
+  <name>dvrk_mesh_vf</name>
+  <version>1.0.0</version>
   <description>
-  project for us cutter vf dvrk
+  project for dvrk mesh virtual fixture
   </description>
   <maintainer email="zli122@jhu.edu">Max Li</maintainer>
   <license>cisst</license>
-  <url>https://github.com/jhu-saw/sawIntuitiveResearchKit</url>
 
   <build_depend>catkin</build_depend>
   <build_depend>cisst_ros_bridge</build_depend>

@@ -44,6 +44,9 @@ def teleop(args):
     # Pose
     t = PoseStamped()
     t.pose.orientation.w = 1.0
+    t.pose.position.x = 0.210
+    t.pose.position.y = 0.035
+    t.pose.position.z = 0.105
     t.header.frame_id = "map"
 
     if not args.a:

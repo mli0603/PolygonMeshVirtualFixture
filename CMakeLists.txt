@@ -10,7 +10,7 @@
 #
 # --- end cisst license ---
 
-project (USAblation)
+project (dvrk_mesh_vf)
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -44,17 +44,17 @@ if (cisst_FOUND)
                 CATKIN_DEPENDS cisst_ros_bridge geometry_msgs roscpp std_msgs)
 
   # catkin/ROS paths
-  cisst_is_catkin_build (USAblation_IS_CATKIN_BUILT)
-  if (USAblation_IS_CATKIN_BUILT)
+  cisst_is_catkin_build (dvrk_mesh_vf_IS_CATKIN_BUILT)
+  if (dvrk_mesh_vf_IS_CATKIN_BUILT)
     set (LIBRARY_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/lib")
   endif ()
 
-  # create/configure file for find_package (USAblation)
-  set (USAblation_INCLUDE_DIR
-       "${USAblation_SOURCE_DIR}/include"
-       "${USAblation_BINARY_DIR}/include")
-  set (USAblation_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
-  set (USAblation_LIBRARIES USAblation)
+  # create/configure file for find_package (dvrk_mesh_vf)
+  set (dvrk_mesh_vf_INCLUDE_DIR
+       "${dvrk_mesh_vf_SOURCE_DIR}/include"
+       "${dvrk_mesh_vf_BINARY_DIR}/include")
+  set (dvrk_mesh_vf_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
+  set (dvrk_mesh_vf_LIBRARIES dvrk_mesh_vf)
 
   # sawIntuitiveResearchKit has been compiled within cisst, we should
   # find it automatically
@@ -76,12 +76,12 @@ if (cisst_FOUND)
     ${sawConstraintController_LIBRARY_DIR}
     ${cisstICP_LIBRARY_DIR})
 
-  set (USAblation_INCLUDE_DIR
-        "${USAblation_SOURCE_DIR}/include")
+  set (dvrk_mesh_vf_INCLUDE_DIR
+        "${dvrk_mesh_vf_SOURCE_DIR}/include")
 
-  include_directories (${USAblation_INCLUDE_DIR})
+  include_directories (${dvrk_mesh_vf_INCLUDE_DIR})
 
-  add_library (USAblation
+  add_library (dvrk_mesh_vf
               "include/mtsDerivedTeleOperationPSM.h"
               "code/mtsDerivedTeleOperationPSM.cpp"
               "include/mtsDerivedIntuitiveResearchKitPSM.h"
@@ -96,13 +96,13 @@ if (cisst_FOUND)
             simulation/simple_teleop.cpp
             simulation/simple_teleop.h)
 
-  cisst_target_link_libraries (USAblation
+  cisst_target_link_libraries (dvrk_mesh_vf
                               ${REQUIRED_CISST_LIBRARIES})
   cisst_target_link_libraries (simpleTeleop
                               ${REQUIRED_CISST_LIBRARIES})
 
   # link against non cisst libraries and cisst components
-  target_link_libraries (USAblation
+  target_link_libraries (dvrk_mesh_vf
                         ${sawIntuitiveResearchKit_LIBRARIES}
                         ${sawControllers_LIBRARIES}
                         ${sawConstraintController_LIBRARIES}
@@ -113,7 +113,7 @@ if (cisst_FOUND)
                         ${cisstICP_LIBRARIES}
                         ${catkin_LIBRARIES})
 
-  configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/USAblationConfig.cmake.in"
-                  "${USAblation_CMAKE_CONFIG_FILE}"
+  configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/dvrk_mesh_vfConfig.cmake.in"
+                  "${dvrk_mesh_vf_CMAKE_CONFIG_FILE}"
                   @ONLY)
 endif (cisst_FOUND)

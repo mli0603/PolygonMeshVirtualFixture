@@ -36,8 +36,8 @@ void simpleTeleop::init() {
     mtsInterfaceProvided * interfaceProvided = AddInterfaceProvided("ProvidesSimpleRobot");
     if (interfaceProvided){
         interfaceProvided->AddCommandWrite(&simpleTeleop::servoCartesianPosition, this, "ServoCartesianPosition");
+        interfaceProvided->AddCommandWrite(&simpleTeleop::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
         interfaceProvided->AddCommandReadState(StateTable, mMeasuredCartesianPosition, "GetMeasuredCartesianPosition");
-        interfaceProvided->AddCommandWrite(&simpleTeleop::meshFileCallback, this, "MeshFileCallback");
     }
 }
 
@@ -105,7 +105,7 @@ void simpleTeleop::setupVF() {
 
     // mesh constraint
     mMeshFile = cisstMesh(true); // error in mm
-    if (mMeshFile.LoadMeshFromSTLFile("/home/max/OneDrive/Research Projects/SickKids/STL/Ascii STL/Concave_Pyramid.stl")==-1){
+    if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/dvrk_mesh_vf/mesh/Skull.stl")==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
     }
@@ -188,10 +188,11 @@ void simpleTeleop::servoCartesianPosition(const vctFrm4x4 & newGoal) {
     mGoalKinematics.Frame.FromNormalized(newGoal);
 }
 
-void simpleTeleop::meshFileCallback(const std::string &file_name)
+void simpleTeleop::SetSkullToPSMTransform(const vctFrm4x4 &transform)
 {
-    if (mMeshFile.LoadMeshFromSTLFile(file_name)==-1){
-        CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
-        cmnThrow("Cannot load STL file");
-    }
+    std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
+
+    // recompute skull coordinates
+    mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+    meshConstraint->TransformMesh(transform,mMeshFile);
 }

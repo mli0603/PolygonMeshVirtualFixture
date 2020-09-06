@@ -29,9 +29,9 @@ int main(){
     subscribers->AddSubscriberToCommandWrite<vctFrm4x4, geometry_msgs::PoseStamped>("RequiresSimpleRobot",
                                              "ServoCartesianPosition",
                                              "/simple_robot/servo_cp");
-    subscribers->AddSubscriberToCommandWrite<std::string, std_msgs::String>("RequiresSimpleRobot",
-                                             "MeshFileCallback",
-                                             "/simple_robot/mesh/file_name");
+    subscribers->AddSubscriberToCommandWrite<vctFrm4x4, geometry_msgs::Transform>("RequiresSimpleRobot",
+                                             "SetSkullToPSMTransform",
+                                             "/Transform/skull_to_psm");
 
     componentManger->AddComponent(subscribers);
     mtsROSBridge * publishers = new mtsROSBridge("publishers", 5 * cmn_ms);

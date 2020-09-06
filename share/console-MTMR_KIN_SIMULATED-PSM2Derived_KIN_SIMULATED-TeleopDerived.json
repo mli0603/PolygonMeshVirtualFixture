@@ -7,7 +7,7 @@
             // match the name the console would use,
             // i.e. <master>-<slave>
             {
-                "shared-library": "USAblation",
+                "shared-library": "dvrk_mesh_vf",
                 "class-name": "mtsDerivedTeleOperationPSM",
                 "constructor-arg": {
                     "Name": "MTMR-PSM2",
@@ -16,7 +16,7 @@
             }
             ,
             {
-                "shared-library": "USAblation",
+                "shared-library": "dvrk_mesh_vf",
                 "class-name": "mtsDerivedIntuitiveResearchKitPSM",
                 "constructor-arg": {
                     "Name": "PSM2",
@@ -25,7 +25,7 @@
             }
             ,
             {
-                "shared-library": "USAblation",
+                "shared-library": "dvrk_mesh_vf",
                 "class-name": "mtsDerivedROSBridge",
                 "constructor-arg": {
                     "Name": "Publisher",
@@ -35,7 +35,7 @@
             }
             ,
             {
-                "shared-library": "USAblation",
+                "shared-library": "dvrk_mesh_vf",
                 "class-name": "mtsDerivedROSBridge",
                 "constructor-arg": {
                     "Name": "Subscriber",

@@ -72,6 +72,7 @@ protected:
     // teleop command
     void servoCartesianPosition(const vctFrm4x4 & newGoal);
     void meshFileCallback(const std::string & file_name);
+    virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
 
 public:
     // provide a name for the task and define the frequency (time

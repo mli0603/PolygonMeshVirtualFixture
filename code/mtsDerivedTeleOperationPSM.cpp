@@ -70,8 +70,6 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
                               PSMGetVelocityCartesian);
     interfacePSM->AddFunction("SetConstraintMotionEnable",
                               PSMSetConstraintMotionEnable);
-    interfacePSM->AddFunction("GetSlackForceDirection",
-                              PSMGetSlackForceDirection);
     interfacePSM->AddFunction("GetSimulation",
                               PSMGetSimulation);
 
@@ -92,7 +90,6 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
     mAlignMTM = false;
 
     elasticityGain.Assign(1.0,1.0,1.0).Multiply(150.0);
-    elasticityGainSlackForce.Assign(1.0,1.0,1.0).Multiply(1000.0);
 }
 
 void mtsDerivedTeleOperationPSM::EnterEnabled(void)
@@ -146,13 +143,6 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
             vct3 force;
             for (size_t i=0 ; i < 3; i++){
                 force[i] = elasticityGain[i] * diff[i];
-            }
-
-            // slack force
-            vct3 slackForce;
-            PSMGetSlackForceDirection(slackForce);
-            for (size_t i=0 ; i < 3; i++){
-                force[i] += elasticityGainSlackForce[i] * slackForce[i];
             }
 
             // Re-orient based on rotation between MTM and PSM
