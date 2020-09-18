@@ -1,0 +1,28 @@
+- git:
+    local-name: cisstNetlib
+    uri: https://github.com/jhu-cisst/cisstNetlib
+    version: devel
+- git:
+    local-name: cisst
+    uri: https://github.com/jhu-cisst/cisst
+    version: feature-crtk
+- git:
+    local-name: cisst-ros
+    uri: https://github.com/jhu-cisst/cisst-ros
+    version: feature-crtk
+- git:
+    local-name: crtk-msgs
+    uri: https://github.com/collaborative-robotics/crtk-msgs
+    version: devel
+- git:
+    local-name: sawConstraintController
+    uri: https://github.com/jhu-saw/sawConstraintController.git
+    version: feature-crtk
+- git:
+    local-name: sawIntuitiveResearchKit
+    uri: https://github.com/jhu-dvrk/sawIntuitiveResearchKit.git
+    version: feature-crtk
+- git:
+    local-name: sawOpenIGTLink
+    uri: https://github.com/jhu-saw/sawOpenIGTLink.git
+    version: feature-crtk
