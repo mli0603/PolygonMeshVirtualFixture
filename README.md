@@ -53,6 +53,7 @@ The demo runs a simple teleoperation that controlled by keyboard presses.
 - Start script by `python scripts/slicer.py` to convert ros messages to slicer messages. Use default registration by adding `--sr`.
 
 ## Log
+- 2020.09.21: We have moved core funcitonalities of handling mesh into CISST library as cisst-mesh component in branch [feature-crtk](https://github.com/jhu-cisst/cisst/tree/feature-crtk). We are working on upgrading the exisitng code base to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
 - 2020.07.15: We are working on integrating some of the core components into [JHU-CISST Library](https://github.com/jhu-cisst/cisst) for minimal dependencies.
 
 ## Acknowledgement
