@@ -54,9 +54,8 @@ int main(){
     componentManger->StartAll();
     componentManger->WaitForStateAll(mtsComponentState::ACTIVE, 2.0*cmn_s);
 
-    while(true){
-	osaSleep(10.0 * cmn_ms);
-    }
+    // ros::spin() callback for subscribers
+    ros::spin();
 
     // cleanup
     componentManger->KillAll();

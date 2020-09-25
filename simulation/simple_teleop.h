@@ -63,6 +63,7 @@ protected:
     // mesh
     msh3Mesh mMeshFile;
     mtsVFDataMesh mMesh;
+    bool mMeshTransformed;
 
     void updateOptimizerKinematics();
 

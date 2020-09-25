@@ -39,6 +39,8 @@ void simpleTeleop::init() {
         interfaceProvided->AddCommandWrite(&simpleTeleop::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
         interfaceProvided->AddCommandReadState(StateTable, mMeasuredCartesianPosition, "GetMeasuredCartesianPosition");
     }
+
+    mMeshTransformed = false;
 }
 
 void simpleTeleop::setupRobot() {
@@ -190,9 +192,17 @@ void simpleTeleop::servoCartesianPosition(const vctFrm4x4 & newGoal) {
 
 void simpleTeleop::SetSkullToPSMTransform(const vctFrm4x4 &transform)
 {
-    std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
+    if (!mMeshTransformed){
+        std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
 
-    // recompute skull coordinates
-    mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
-    meshConstraint->TransformMesh(transform,mMeshFile);
+        // recompute skull coordinates
+        mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+        meshConstraint->TransformMesh(transform,mMeshFile);
+
+        mMeshTransformed = true;
+    }
+    else{
+        std::cout << "Skull alraedy transformed" << std::endl;
+    }
+
 }
