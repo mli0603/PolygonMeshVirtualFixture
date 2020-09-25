@@ -25,7 +25,6 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawConstraintController/mtsVFController.h>
 #include <sawConstraintController/mtsVFFollow.h>
 #include <sawConstraintController/mtsVFLimitsConstraint.h>
-#include <sawConstraintController/mtsVFPlane.h>
 #include <sawConstraintController/mtsVFMesh.h>
 #include <sawConstraintController/mtsVFDataBase.h>
 #include <sawConstraintController/mtsVFDataJointLimits.h>
@@ -54,9 +53,7 @@ protected:
     mtsVFController *mController;
     mtsVFDataBase mTeleopObjective; // No additional data needed, therefore using mtsVFBase
     mtsVFDataJointLimits mJointIncLimitsConstraint;
-    mtsVFDataPlane mPlaneLeft;
-    mtsVFDataPlane mPlaneRight;
-    cisstMesh mMeshFile;
+    msh3Mesh mMeshFile;
     mtsVFDataMesh mMesh;
     void SetupVF();
 

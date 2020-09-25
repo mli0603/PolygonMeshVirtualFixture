@@ -13,14 +13,26 @@
 - git:
     local-name: crtk-msgs
     uri: https://github.com/collaborative-robotics/crtk-msgs
-    version: devel
-- git:
-    local-name: sawConstraintController
-    uri: https://github.com/jhu-saw/sawConstraintController.git
-    version: feature-crtk
+    version: master
 - git:
     local-name: sawIntuitiveResearchKit
     uri: https://github.com/jhu-dvrk/sawIntuitiveResearchKit.git
+    version: feature-crtk
+- git:
+    local-name: sawTextToSpeech
+    uri: https://github.com/jhu-saw/sawTextToSpeech.git
+    version: devel
+- git:
+    local-name: sawRobotIO1394
+    uri: https://github.com/jhu-saw/sawRobotIO1394.git
+    version: feature-crtk
+- git:
+    local-name: sawKeyboard
+    uri: https://github.com/jhu-saw/sawKeyboard.git
+    version: devel
+- git:
+    local-name: sawControllers
+    uri: https://github.com/jhu-saw/sawControllers.git
     version: feature-crtk
 - git:
     local-name: sawOpenIGTLink

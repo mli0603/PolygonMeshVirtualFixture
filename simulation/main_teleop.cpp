@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <cisst_ros_bridge/mtsROSBridge.h>
 #include <cisstOSAbstraction/osaSleep.h>
-
+#include <sawOpenIGTLink/mtsIGTLBridge.h>
 
 int main(){
     // log configuration

@@ -17,7 +17,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cstdio>
 #include "simple_teleop.h"
 
-#include <cisstCommon/cmnConstants.h>
+#include <cisstCommon/cmnUnits.h>
 #include <cisstMultiTask/mtsInterfaceProvided.h>
 
 simpleTeleop::simpleTeleop(const std::string & componentName, double periodInSeconds):
@@ -104,7 +104,7 @@ void simpleTeleop::setupVF() {
     mController->AddVFLimits(mJointIncrementLimits);
 
     // mesh constraint
-    mMeshFile = cisstMesh(true); // error in mm
+    mMeshFile = msh3Mesh(true); // error in mm
     if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/dvrk_mesh_vf/mesh/Skull.stl")==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");

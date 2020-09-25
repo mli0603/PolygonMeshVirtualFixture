@@ -27,13 +27,12 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawConstraintController/mtsVFFollow.h>
 #include <sawConstraintController/mtsVFPlane.h>
 #include <sawConstraintController/mtsVFLimitsConstraint.h>
-#include <sawConstraintController/mtsVFCylinder.h>
 #include <sawConstraintController/mtsVFMesh.h>
 
 #include <sawConstraintController/mtsVFDataBase.h>
 #include <sawConstraintController/mtsVFDataPlane.h>
 #include <sawConstraintController/mtsVFDataJointLimits.h>
-#include <sawConstraintController/mtsVFDataCylinder.h>
+#include <sawConstraintController/mtsVFMesh.h>
 
 class simpleTeleop: public mtsTaskPeriodic {
 protected:
@@ -61,10 +60,8 @@ protected:
     mtsVFDataBase mTeleopObjective; // No additional data needed, therefore using mtsVFBase
     mtsVFDataPlane mPlaneConstraint;
     mtsVFDataJointLimits mJointIncrementLimits;
-    mtsVFDataCylinder mNerveLeft;
-    mtsVFDataCylinder mNerveRight;
     // mesh
-    cisstMesh mMeshFile;
+    msh3Mesh mMeshFile;
     mtsVFDataMesh mMesh;
 
     void updateOptimizerKinematics();
