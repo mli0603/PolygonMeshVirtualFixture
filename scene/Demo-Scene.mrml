@@ -34,8 +34,7 @@
      <SubjectHierarchyItem id="18" dataNode="vtkMRMLLinearTransformNode4" parent="3" type="Transforms" expanded="true"></SubjectHierarchyItem>
      <SubjectHierarchyItem id="19" dataNode="vtkMRMLModelNode4" parent="3" type="Models" expanded="true"></SubjectHierarchyItem>
      <SubjectHierarchyItem id="15" dataNode="vtkMRMLMarkupsFiducialNode2" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem>
-     <SubjectHierarchyItem id="20" dataNode="vtkMRMLMarkupsFiducialNode1" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem>
-     <SubjectHierarchyItem id="23" dataNode="vtkMRMLModelNode5" parent="3" type="Models" expanded="true"></SubjectHierarchyItem></SubjectHierarchyItem></SubjectHierarchy>
+     <SubjectHierarchyItem id="20" dataNode="vtkMRMLMarkupsFiducialNode1" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem></SubjectHierarchyItem></SubjectHierarchy>
  <ClipModels
   id="vtkMRMLClipModelsNodevtkMRMLClipModelsNode" name="ClipModels" hideFromEditors="true" selectable="true" selected="false" singletonTag="vtkMRMLClipModelsNode" clipType="0" redSliceClipState="0" yellowSliceClipState="0" greenSliceClipState="0" ></ClipModels>
  <ScriptedModule
@@ -86,8 +85,8 @@
     id="vtkMRMLCameraNode1" name="Default Scene Camera" hideFromEditors="false" selectable="true" selected="false" userTags="" position="0 500 0" focalPoint="0 0 0" viewUp="0 0 1" parallelProjection="false" parallelScale="1" appliedTransform="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"  ></Camera>
   <SubjectHierarchy
     id="vtkMRMLSubjectHierarchyNode1" name="SubjectHierarchy" hideFromEditors="false" selectable="true" selected="false" attributes="SubjectHierarchyVersion:2"  >
-    <SubjectHierarchyItem id="24" name="Scene" parent="0" type="" expanded="true" attributes="Level^Scene|"></SubjectHierarchyItem>
-    <SubjectHierarchyItem id="25" name="UnresolvedItems" parent="0" type="" expanded="true" attributes="Level^UnresolvedItems|">
+    <SubjectHierarchyItem id="26" name="Scene" parent="0" type="" expanded="true" attributes="Level^Scene|"></SubjectHierarchyItem>
+    <SubjectHierarchyItem id="27" name="UnresolvedItems" parent="0" type="" expanded="true" attributes="Level^UnresolvedItems|">
       <SubjectHierarchyItem id="13" dataNode="vtkMRMLSceneViewNode1" parent="3" type="SceneViews" expanded="true"></SubjectHierarchyItem>
       <SubjectHierarchyItem id="16" dataNode="vtkMRMLMarkupsFiducialNode3" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem>
       <SubjectHierarchyItem id="17" dataNode="vtkMRMLMarkupsFiducialNode4" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem>
@@ -95,8 +94,7 @@
       <SubjectHierarchyItem id="19" dataNode="vtkMRMLModelNode4" parent="3" type="Models" expanded="true"></SubjectHierarchyItem>
       <SubjectHierarchyItem id="15" dataNode="vtkMRMLMarkupsFiducialNode2" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem>
       <SubjectHierarchyItem id="20" dataNode="vtkMRMLMarkupsFiducialNode1" parent="3" type="Markups" expanded="true"></SubjectHierarchyItem>
-      <SubjectHierarchyItem id="23" dataNode="vtkMRMLModelNode5" parent="3" type="Models" expanded="true"></SubjectHierarchyItem>
-      <SubjectHierarchyItem id="3" name="Scene" parent="25" type="" expanded="true" attributes="Level^Scene|"></SubjectHierarchyItem></SubjectHierarchyItem></SubjectHierarchy>
+      <SubjectHierarchyItem id="3" name="Scene" parent="27" type="" expanded="true" attributes="Level^Scene|"></SubjectHierarchyItem></SubjectHierarchyItem></SubjectHierarchy>
   <ClipModels
     id="vtkMRMLClipModelsNodevtkMRMLClipModelsNode" name="ClipModels" hideFromEditors="true" selectable="true" selected="false" singletonTag="vtkMRMLClipModelsNode" clipType="0" redSliceClipState="0" yellowSliceClipState="0" greenSliceClipState="0"  ></ClipModels>
   <ScriptedModule
@@ -136,7 +134,7 @@
   <MarkupsFiducialStorage
     id="vtkMRMLMarkupsFiducialStorageNode4" name="MarkupsFiducialStorage_3" hideFromEditors="true" selectable="true" selected="false" fileName="Robot%20Registration.fcsv" useCompression="1" defaultWriteFileExtension="fcsv" readState="0" writeState="4" coordinateSystem="0"  ></MarkupsFiducialStorage>
   <LinearTransform
-    id="vtkMRMLLinearTransformNode4" name="Skull To PSM" hideFromEditors="false" selectable="true" selected="false" attributes="IGTLVisible:false;OpenIGTLinkIF.pushOnConnect:false" displayNodeRef="vtkMRMLTransformDisplayNode1" storageNodeRef="vtkMRMLTransformStorageNode1" references="LocatorModel:vtkMRMLModelNode5;display:vtkMRMLTransformDisplayNode1;storage:vtkMRMLTransformStorageNode1;" userTags="" matrixTransformToParent="-0.969957 0.173716 -0.17031 276.218  -0.0382713 0.582395 0.812004 -90.2836  0.240246 0.794128 -0.55825 83.1379  0 0 0 1"  ></LinearTransform>
+    id="vtkMRMLLinearTransformNode4" name="Skull To PSM" hideFromEditors="false" selectable="true" selected="false" attributes="IGTLVisible:false;OpenIGTLinkIF.pushOnConnect:false" displayNodeRef="vtkMRMLTransformDisplayNode1" storageNodeRef="vtkMRMLTransformStorageNode1" references="display:vtkMRMLTransformDisplayNode1;storage:vtkMRMLTransformStorageNode1;" userTags="" matrixTransformToParent="-0.969957 0.173716 -0.17031 276.218  -0.0382713 0.582395 0.812004 -90.2836  0.240246 0.794128 -0.55825 83.1379  0 0 0 1"  ></LinearTransform>
   <TransformStorage
     id="vtkMRMLTransformStorageNode1" name="TransformStorage" hideFromEditors="true" selectable="true" selected="false" fileName="Skull%20To%20PSM.h5" useCompression="1" defaultWriteFileExtension="h5" readState="0" writeState="4" preferITKv3CompatibleTransforms="false"  ></TransformStorage>
   <ModelStorage
@@ -159,12 +157,6 @@
     id="vtkMRMLMarkupsFiducialNode1" name="measured_cp" description="Received by OpenIGTLink" hideFromEditors="false" selectable="true" selected="false" attributes="GroupName:" displayNodeRef="vtkMRMLMarkupsDisplayNode1" storageNodeRef="vtkMRMLMarkupsFiducialStorageNode1" references="display:vtkMRMLMarkupsDisplayNode1;storage:vtkMRMLMarkupsFiducialStorageNode1;" userTags="" locked="0" markupLabelFormat="%N-%d"  ></MarkupsFiducial>
   <MarkupsFiducialStorage
     id="vtkMRMLMarkupsFiducialStorageNode1" name="MarkupsFiducialStorage" hideFromEditors="true" selectable="true" selected="false" fileName="measured_cp.fcsv" useCompression="1" defaultWriteFileExtension="fcsv" readState="0" writeState="4" coordinateSystem="0"  ></MarkupsFiducialStorage>
-  <ModelDisplay
-    id="vtkMRMLModelDisplayNode5" name="ModelDisplay_1" hideFromEditors="true" selectable="true" selected="false" color="0 1 1" edgeColor="0 0 0" selectedColor="1 0 0" selectedAmbient="0.4" ambient="0" diffuse="1" selectedSpecular="0.5" specular="0" power="1" opacity="1" sliceIntersectionOpacity="1" pointSize="1" lineWidth="1" representation="2" lighting="true" interpolation="1" shading="true" visibility="false" edgeVisibility="false" clipping="false" sliceIntersectionVisibility="false" sliceIntersectionThickness="1" frontfaceCulling="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" interpolateTexture="false" scalarRangeFlag="UseData" scalarRange="0 100"   ></ModelDisplay>
-  <Model
-    id="vtkMRMLModelNode5" name="Locator_Skull To PSM" hideFromEditors="false" selectable="true" selected="false" displayNodeRef="vtkMRMLModelDisplayNode5" storageNodeRef="vtkMRMLModelStorageNode2" transformNodeRef="vtkMRMLLinearTransformNode4" references="display:vtkMRMLModelDisplayNode5;storage:vtkMRMLModelStorageNode2;transform:vtkMRMLLinearTransformNode4;" userTags=""  ></Model>
-  <ModelStorage
-    id="vtkMRMLModelStorageNode2" name="ModelStorage_1" hideFromEditors="true" selectable="true" selected="false" fileName="Locator_Skull%20To%20PSM.vtk" useCompression="1" defaultWriteFileExtension="vtk" readState="0" writeState="0" coordinateSystem="RAS"  ></ModelStorage>
 </SceneView>
  <SceneViewStorage
   id="vtkMRMLSceneViewStorageNode2" name="SceneViewStorage_1" hideFromEditors="true" selectable="true" selected="false" fileName="Master%20Scene%20View.png" useCompression="1" defaultWriteFileExtension="png" readState="0" writeState="4" ></SceneViewStorage>
@@ -187,7 +179,7 @@
  <MarkupsFiducialStorage
   id="vtkMRMLMarkupsFiducialStorageNode4" name="MarkupsFiducialStorage_3" hideFromEditors="true" selectable="true" selected="false" fileName="Robot%20Registration.fcsv" useCompression="1" defaultWriteFileExtension="fcsv" readState="0" writeState="4" coordinateSystem="0" ></MarkupsFiducialStorage>
  <LinearTransform
-  id="vtkMRMLLinearTransformNode4" name="Skull To PSM" hideFromEditors="false" selectable="true" selected="false" attributes="IGTLVisible:false;OpenIGTLinkIF.pushOnConnect:false" displayNodeRef="vtkMRMLTransformDisplayNode1" storageNodeRef="vtkMRMLTransformStorageNode1" references="LocatorModel:vtkMRMLModelNode5;display:vtkMRMLTransformDisplayNode1;storage:vtkMRMLTransformStorageNode1;" userTags="" matrixTransformToParent="-0.969957 0.173716 -0.17031 276.218  -0.0382713 0.582395 0.812004 -90.2836  0.240246 0.794128 -0.55825 83.1379  0 0 0 1" ></LinearTransform>
+  id="vtkMRMLLinearTransformNode4" name="Skull To PSM" hideFromEditors="false" selectable="true" selected="false" attributes="IGTLVisible:false;OpenIGTLinkIF.pushOnConnect:false" displayNodeRef="vtkMRMLTransformDisplayNode1" storageNodeRef="vtkMRMLTransformStorageNode1" references="display:vtkMRMLTransformDisplayNode1;storage:vtkMRMLTransformStorageNode1;" userTags="" matrixTransformToParent="-0.969957 0.173716 -0.17031 276.218  -0.0382713 0.582395 0.812004 -90.2836  0.240246 0.794128 -0.55825 83.1379  0 0 0 1" ></LinearTransform>
  <TransformStorage
   id="vtkMRMLTransformStorageNode1" name="TransformStorage" hideFromEditors="true" selectable="true" selected="false" fileName="Skull%20To%20PSM.h5" useCompression="1" defaultWriteFileExtension="h5" readState="0" writeState="4" preferITKv3CompatibleTransforms="false" ></TransformStorage>
  <ModelStorage
@@ -210,10 +202,4 @@
   id="vtkMRMLMarkupsFiducialNode1" name="measured_cp" description="Received by OpenIGTLink" hideFromEditors="false" selectable="true" selected="false" attributes="GroupName:" displayNodeRef="vtkMRMLMarkupsDisplayNode1" storageNodeRef="vtkMRMLMarkupsFiducialStorageNode1" references="display:vtkMRMLMarkupsDisplayNode1;storage:vtkMRMLMarkupsFiducialStorageNode1;" userTags="" locked="0" markupLabelFormat="%N-%d" ></MarkupsFiducial>
  <MarkupsFiducialStorage
   id="vtkMRMLMarkupsFiducialStorageNode1" name="MarkupsFiducialStorage" hideFromEditors="true" selectable="true" selected="false" fileName="measured_cp.fcsv" useCompression="1" defaultWriteFileExtension="fcsv" readState="0" writeState="4" coordinateSystem="0" ></MarkupsFiducialStorage>
- <ModelDisplay
-  id="vtkMRMLModelDisplayNode5" name="ModelDisplay_1" hideFromEditors="true" selectable="true" selected="false" color="0 1 1" edgeColor="0 0 0" selectedColor="1 0 0" selectedAmbient="0.4" ambient="0" diffuse="1" selectedSpecular="0.5" specular="0" power="1" opacity="1" sliceIntersectionOpacity="1" pointSize="1" lineWidth="1" representation="2" lighting="true" interpolation="1" shading="true" visibility="false" edgeVisibility="false" clipping="false" sliceIntersectionVisibility="false" sliceIntersectionThickness="1" frontfaceCulling="false" backfaceCulling="true" scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" interpolateTexture="false" scalarRangeFlag="UseData" scalarRange="0 100"  ></ModelDisplay>
- <Model
-  id="vtkMRMLModelNode5" name="Locator_Skull To PSM" hideFromEditors="false" selectable="true" selected="false" displayNodeRef="vtkMRMLModelDisplayNode5" storageNodeRef="vtkMRMLModelStorageNode2" transformNodeRef="vtkMRMLLinearTransformNode4" references="display:vtkMRMLModelDisplayNode5;storage:vtkMRMLModelStorageNode2;transform:vtkMRMLLinearTransformNode4;" userTags="" ></Model>
- <ModelStorage
-  id="vtkMRMLModelStorageNode2" name="ModelStorage_1" hideFromEditors="true" selectable="true" selected="false" fileName="Locator_Skull%20To%20PSM.vtk" useCompression="1" defaultWriteFileExtension="vtk" readState="0" writeState="0" coordinateSystem="RAS" ></ModelStorage>
 </MRML>
