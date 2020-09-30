@@ -39,6 +39,10 @@
     uri: https://github.com/jhu-saw/sawControllers.git
     version: devel
 - git:
+    local-name: sawConstraintController
+    uri: https://github.com/jhu-saw/sawConstraintController.git
+    version: devel
+- git:
     local-name: sawOpenIGTLink
     uri: https://github.com/jhu-saw/sawOpenIGTLink.git
     version: devel
