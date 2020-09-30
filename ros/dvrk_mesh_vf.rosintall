@@ -11,6 +11,10 @@
     uri: https://github.com/jhu-cisst/cisst-ros
     version: devel
 - git:
+    local-name: dvrk-ros
+    uri: https://github.com/jhu-dvrk/dvrk-ros.git
+    version: devel
+- git:
     local-name: crtk-msgs
     uri: https://github.com/collaborative-robotics/crtk-msgs
     version: master

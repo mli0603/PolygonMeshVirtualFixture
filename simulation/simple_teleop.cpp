@@ -32,11 +32,14 @@ void simpleTeleop::init() {
 
     StateTable.AddData(mJacobian,"Jacobian");
     StateTable.AddData(mMeasuredCartesianPosition,"MeasuredCartesianPosition");
+    StateTable.AddData(mMeasuredCartesianTranslation,"mMeasuredCartesianTranslation");
 
     mtsInterfaceProvided * interfaceProvided = AddInterfaceProvided("ProvidesSimpleRobot");
     if (interfaceProvided){
         interfaceProvided->AddCommandWrite(&simpleTeleop::servoCartesianPosition, this, "ServoCartesianPosition");
-        interfaceProvided->AddCommandWrite(&simpleTeleop::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
+        interfaceProvided->AddCommandWrite(&simpleTeleop::servoCartesianTranslation, this, "SetServoCartesianTranslation");
+        interfaceProvided->AddCommandWrite(&simpleTeleop::SetSkullToPSMTransformIGTL, this, "SetSkullToPSMTransformIGTL");
+        interfaceProvided->AddCommandReadState(StateTable, mMeasuredCartesianTranslation, "GetMeasuredCartesianTranslation");
         interfaceProvided->AddCommandReadState(StateTable, mMeasuredCartesianPosition, "GetMeasuredCartesianPosition");
     }
 
@@ -130,6 +133,7 @@ void simpleTeleop::setupVF() {
 
 void simpleTeleop::forwardKinematics(vctDoubleVec& jointPosition) {
     mMeasuredCartesianPosition.Position().Translation() = jointPosition.Ref(3,0);
+    mMeasuredCartesianTranslation.Assign(mMeasuredCartesianPosition.Position().Translation()).Multiply(cmn_m/cmn_mm); // convert to mm for slicer
 }
 
 void simpleTeleop::Run() {
@@ -157,7 +161,6 @@ void simpleTeleop::Run() {
             std::cout << "inqeuality rows " << mController->Optimizer.GetIneqConstraintMatrix().rows() << "cols "<<mController->Optimizer.GetIneqConstraintMatrix().cols()<< std::endl;
             std::cout << "inqeuality vector " << mController->Optimizer.GetIneqConstraintVector().size() << std::endl;
         }
-
     }
 }
 
@@ -190,19 +193,26 @@ void simpleTeleop::servoCartesianPosition(const vctFrm4x4 & newGoal) {
     mGoalKinematics.Frame.FromNormalized(newGoal);
 }
 
-void simpleTeleop::SetSkullToPSMTransform(const vctFrm4x4 &transform)
+void simpleTeleop::SetSkullToPSMTransformIGTL(const prmPositionCartesianSet &transform)
 {
     if (!mMeshTransformed){
         std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
 
         // recompute skull coordinates
+        vctFrm4x4 f;
+        f.From(transform.Goal());
+        f.Translation().Multiply(cmn_mm/cmn_m); // convert to m
         mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
-        meshConstraint->TransformMesh(transform,mMeshFile);
+        meshConstraint->TransformMesh(f, mMeshFile);
 
         mMeshTransformed = true;
     }
     else{
         std::cout << "Skull alraedy transformed" << std::endl;
     }
+}
 
+void simpleTeleop::servoCartesianTranslation(const vct3 &newGoal)
+{
+    mGoalKinematics.Frame.Translation().Assign(newGoal).Multiply(cmn_mm / cmn_m);
 }

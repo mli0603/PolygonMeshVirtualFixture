@@ -33,10 +33,12 @@ set (REQUIRED_CISST_LIBRARIES
      cisstNumerical)
 
 find_package (cisst REQUIRED ${REQUIRED_CISST_LIBRARIES})
-
+find_package (OpenIGTLink 3
+                HINTS igtl /usr/lib/igtl /usr/local/lib/igtl/cmake/igtl-3.1 /usr/local/lib/igtl /usr/local/)
 if (cisst_FOUND)
   # load cisst configuration
   include (${CISST_USE_FILE})
+  include (${OpenIGTLink_USE_FILE})
 
   # find include in catkin space
   include_directories (${catkin_INCLUDE_DIRS})

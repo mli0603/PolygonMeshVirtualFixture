@@ -21,6 +21,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstMultiTask/mtsVector.h>
 #include <cisstMultiTask/mtsTransformationTypes.h>
 
+#include <cisstParameterTypes/prmPositionCartesianSet.h>
 #include <cisstParameterTypes/prmPositionCartesianGet.h>
 
 #include <sawConstraintController/mtsVFController.h>
@@ -70,7 +71,10 @@ protected:
     // teleop command
     void servoCartesianPosition(const vctFrm4x4 & newGoal);
     void meshFileCallback(const std::string & file_name);
-    virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
+    void SetSkullToPSMTransformIGTL(const prmPositionCartesianSet & transform);
+    void servoCartesianTranslation(const vct3 & newGoal);
+
+    vct3 mMeasuredCartesianTranslation;
 
 public:
     // provide a name for the task and define the frequency (time
