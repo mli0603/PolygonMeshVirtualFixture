@@ -36,7 +36,7 @@ wstool init src # we're going to use wstool to pull all the code from github
 catkin init
 cd src # go in source directory to pull code
 git clone https://github.com/mli0603/PolygonMeshVirtualFixture.git dvrk_mesh_vf # clone the code in a folder called dvrk_mesh_vf
-wstool merge dvrk_mesh_vf/ros/dvrk_mesh_vf.rosintall # add required repos
+wstool merge dvrk_mesh_vf/scripts/dvrk_mesh_vf.rosintall # add required repos
 wstool up # now wstool knows which repos to pull, let's get the code
 catkin build # ... and finally compile everything
 ```
