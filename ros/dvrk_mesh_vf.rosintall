@@ -1,0 +1,44 @@
+- git:
+    local-name: cisstNetlib
+    uri: https://github.com/jhu-cisst/cisstNetlib
+    version: devel
+- git:
+    local-name: cisst
+    uri: https://github.com/jhu-cisst/cisst
+    version: devel
+- git:
+    local-name: cisst-ros
+    uri: https://github.com/jhu-cisst/cisst-ros
+    version: devel
+- git:
+    local-name: dvrk-ros
+    uri: https://github.com/jhu-dvrk/dvrk-ros.git
+    version: devel
+- git:
+    local-name: crtk-msgs
+    uri: https://github.com/collaborative-robotics/crtk-msgs
+    version: master
+- git:
+    local-name: sawIntuitiveResearchKit
+    uri: https://github.com/jhu-dvrk/sawIntuitiveResearchKit.git
+    version: devel
+- git:
+    local-name: sawTextToSpeech
+    uri: https://github.com/jhu-saw/sawTextToSpeech.git
+    version: devel
+- git:
+    local-name: sawRobotIO1394
+    uri: https://github.com/jhu-saw/sawRobotIO1394.git
+    version: devel
+- git:
+    local-name: sawKeyboard
+    uri: https://github.com/jhu-saw/sawKeyboard.git
+    version: devel
+- git:
+    local-name: sawControllers
+    uri: https://github.com/jhu-saw/sawControllers.git
+    version: devel
+- git:
+    local-name: sawOpenIGTLink
+    uri: https://github.com/jhu-saw/sawOpenIGTLink.git
+    version: devel

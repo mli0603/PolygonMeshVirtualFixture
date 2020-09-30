@@ -1,6 +1,9 @@
 # PolygonMeshVirtualFixture
-This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to automatically generate complex virtual fixtures for arbitrary geometries given a polygon mesh (STL) file. The framework is applicable to all CISST based robots, and this repo contains a demo of the anatomical mesh-based virtual fixture for dVRK.
-![](media/demo_gif.gif)
+
+
+This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to automatically generate complex virtual fixtures for arbitrary geometries given a polygon mesh (STL) file. The framework is applicable to all CISST-based robots. This repo contains [an interactive demo]() as well as example code of the virtual fixture working with dVRK.
+![](media/demo.gif)
+
 
 If you use our code, please cite
 ```
@@ -11,46 +14,56 @@ If you use our code, please cite
   year={2020}
 }
 ```
+## System Requirement
+We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
 
 ## Dependencies
-- **cisst-saw**: Pleaes refer to documentation at link [here](https://github.com/jhu-cisst/cisst-saw).
-- **3D Slicer**: We use 3D Slicer as a front end for visualization. To download, please use link [here](http://slicer.kitware.com/midas3/download/item/330417/Slicer-4.8.1-linux-amd64.tar.gz).
-- **ROS-IGTL-Bridge**: We usee ROS-IGTL-Bridge to communicate between dVRK and Slicer. For installation instruction, please refer to documentation at link [here](https://github.com/openigtlink/ROS-IGTL-Bridge).
-- **Python dependencies**: We use Python 3 to convert ROS messages to IGT to enable front end visualization. The easiest way to get ROS and Python environment is to set up a virtual environment. In order to do so:
-    1. Install the following pacakge by `sudo apt install python3-venv python3-yaml python3-pip`. 
-    2. Create your virtual environment by `python3 -m venv [NAME]`. 
-    3. Then Python dependencies can be installed via `pip install -r scripts/requirements.txt`.
+- **3D Slicer**: We use 3D Slicer as a front end for visualization. It is required to use 3D Slicer 4.8.1 for OpenIGTLink compatibility. To download, please use link [here](http://slicer.kitware.com/midas3/download/item/330417/Slicer-4.8.1-linux-amd64.tar.gz).
+- **ROS**: To install ROS, pleaes follow instruction [here](http://wiki.ros.org/melodic/Installation/Ubuntu)
+- **Third-Party Packages**: Please install by
+```sh
+sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
+sudo apt install python-wstool python-catkin-tools # catkin and wstool for ROS build
+```
+
+## Compilation
+Please follow the following system command
+```sh
+source /opt/ros/melodic/setup.bash # or use whatever version of ROS is installed!
+mkdir ~/catkin_ws # create the catkin workspace
+cd ~/catkin_ws # go in the workspace
+wstool init src # we're going to use wstool to pull all the code from github
+catkin init
+cd src # go in source directory to pull code
+git clone https://github.com/mli0603/PolygonMeshVirtualFixture.git dvrk_mesh_vf # clone the code in a folder called dvrk_mesh_vf
+wstool merge dvrk_mesh_vf/ros/dvrk_mesh_vf.rosintall # add required repos
+wstool up # now wstool knows which repos to pull, let's get the code
+catkin build # ... and finally compile everything
+```
 
 ## To run the demo
-### Simple teleop simulation
-The demo runs a simple teleoperation that controlled by keyboard presses.
+### Visualization
+- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servoed position (i.e. commanded position from the MTM or keyboard) and the blue sphere represents the measured position (i.e. actual position with virtual fixture constraints). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
+
+![](media/visualization_slicer.png)
+- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
+
+![](media/igtl_bridge_activate.png)
+
+### Interactive Demo - Simple teleop 
+This interactive demo runs a simple teleoperation "robot" where the robot position (blue point) is controlled by the red point. Drag the red point to move the robot around. The robot is subject to the mesh virtual fixture, thus it cannot penatrate the skull.
+- Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
-- To control the position, start script by `python scripts/teleop.py` and follow the instruction (see figure below). 
+- To control the position, drag the red point. 
+![](media/simple_teleop_demo.gif)
 
-![](media/simple_teleop_keyboard_control.png)
-- To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
-
-### dVRK simulation
-- Start roscore by `roscore`.
-- Launch dVRK in simulation by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json`. Optionally, you can visualize the dVRK PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2`.
-- To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 
 ### dVRK
+- Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 - Start roscore by `roscore`.
 - Base on the file `share/console-MTMR-PSM2Derived-TeleopDerived.json`, create a configuraiton file that matches your MTMR and PSM2 (or MTML and PSM1) serial number.
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
-- To run visualization, please refer to the [**Visualization** section below](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
-
-### Visualization
-- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servoed position (i.e. commanded position from the MTM or keyboard) and the blue sphere represents the measured position (i.e. actual position with virtual fixture constraints). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture)
-
-![](media/visualization_slicer.png)
-- Start ROS-IGTL-Bridge by `roslaunch ros_igtl_bridge bridge.launch`. Choose `Server` mode by typing `1`. Use port number `18944`.
-- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
-
-![](media/ros_igtl_bridge_active.png)
-- Start script by `python scripts/slicer.py` to convert ros messages to slicer messages. Use default registration by adding `--sr`.
 
 ## Log
 - 2020.09.21: We have moved core funcitonalities of handling mesh into CISST library as cisst-mesh component in branch [feature-crtk](https://github.com/jhu-cisst/cisst/tree/feature-crtk). We are working on upgrading the exisitng code base to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.

@@ -6,7 +6,9 @@
 #include <cstdio>
 #include <cisst_ros_bridge/mtsROSBridge.h>
 #include <cisstOSAbstraction/osaSleep.h>
-
+#include <sawOpenIGTLink/mtsCISSTToIGTL.h>
+#include <sawOpenIGTLink/mtsIGTLToCISST.h>
+#include <sawOpenIGTLink/mtsIGTLBridge.h>
 
 int main(){
     // log configuration
@@ -27,24 +29,38 @@ int main(){
     // add ros bridge
     mtsROSBridge * subscribers = new mtsROSBridge("subscribers", 0.1 * cmn_ms, true /* spin */);
     subscribers->AddSubscriberToCommandWrite<vctFrm4x4, geometry_msgs::PoseStamped>("RequiresSimpleRobot",
-                                             "ServoCartesianPosition",
-                                             "/simple_robot/servo_cp");
-    subscribers->AddSubscriberToCommandWrite<vctFrm4x4, geometry_msgs::Transform>("RequiresSimpleRobot",
-                                             "SetSkullToPSMTransform",
-                                             "/Transform/skull_to_psm");
+                                                                                    "ServoCartesianPosition",
+                                                                                    "/simple_robot/servo_cp");
 
     componentManger->AddComponent(subscribers);
     mtsROSBridge * publishers = new mtsROSBridge("publishers", 5 * cmn_ms);
     publishers->AddPublisherFromCommandRead<prmPositionCartesianGet, geometry_msgs::PoseStamped>("RequiresSimpleRobot",
-                                             "GetMeasuredCartesianPosition",
-                                             "/simple_robot/measured_cp");
+                                                                                                 "GetMeasuredCartesianPosition",
+                                                                                                 "/simple_robot/measured_cp");
     componentManger->AddComponent(publishers);
 
-    // connect components
+    // add openIgtlink
+    mtsIGTLBridge * igtlBridge = new mtsIGTLBridge("simpleTelop-igtl", 5 * cmn_ms);
+    igtlBridge->AddSenderFromCommandRead<vct3, igtl::PointMessage>("RequiresSimpleRobot",
+                                                                   "GetMeasuredCartesianTranslation",
+                                                                   "measured_cp");
+    igtlBridge->AddReceiverToCommandWrite<igtl::PointMessage, vct3>("RequiresSimpleRobot",
+                                                                    "SetServoCartesianTranslation",
+                                                                    "servo_cp");
+    igtlBridge->AddReceiverToCommandWrite<igtl::TransformMessage, prmPositionCartesianSet>("RequiresSimpleRobot",
+                                                                                           "SetSkullToPSMTransformIGTL",
+                                                                                           "Skull To PSM");
+
+    igtlBridge->SetPort(18944);
+    componentManger->AddComponent(igtlBridge);
+
+    // connect componentsS
     componentManger->Connect(subscribers->GetName(), "RequiresSimpleRobot",
-            robot.GetName(), "ProvidesSimpleRobot");
+                             robot.GetName(), "ProvidesSimpleRobot");
     componentManger->Connect(publishers->GetName(), "RequiresSimpleRobot",
-            robot.GetName(), "ProvidesSimpleRobot");
+                             robot.GetName(), "ProvidesSimpleRobot");
+    componentManger->Connect(igtlBridge->GetName(), "RequiresSimpleRobot",
+                             robot.GetName(), "ProvidesSimpleRobot");
 
     // create components
     componentManger->CreateAll();
@@ -54,9 +70,8 @@ int main(){
     componentManger->StartAll();
     componentManger->WaitForStateAll(mtsComponentState::ACTIVE, 2.0*cmn_s);
 
-    while(true){
-	osaSleep(10.0 * cmn_ms);
-    }
+    // ros::spin() callback for subscribers
+    ros::spin();
 
     // cleanup
     componentManger->KillAll();

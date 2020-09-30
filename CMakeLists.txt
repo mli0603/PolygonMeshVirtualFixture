@@ -25,6 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
 set (REQUIRED_CISST_LIBRARIES
      cisstCommon
      cisstVector
+     cisstMesh
      cisstOSAbstraction
      cisstMultiTask
      cisstParameterTypes
@@ -32,10 +33,12 @@ set (REQUIRED_CISST_LIBRARIES
      cisstNumerical)
 
 find_package (cisst REQUIRED ${REQUIRED_CISST_LIBRARIES})
-
+find_package (OpenIGTLink 3
+                HINTS igtl /usr/lib/igtl /usr/local/lib/igtl/cmake/igtl-3.1 /usr/local/lib/igtl /usr/local/)
 if (cisst_FOUND)
   # load cisst configuration
   include (${CISST_USE_FILE})
+  include (${OpenIGTLink_USE_FILE})
 
   # find include in catkin space
   include_directories (${catkin_INCLUDE_DIRS})
@@ -61,20 +64,20 @@ if (cisst_FOUND)
   find_package(sawIntuitiveResearchKit 1.7.1 REQUIRED)
   find_package(sawControllers 1.7.1 REQUIRED)
   find_package(sawConstraintController REQUIRED)
-  find_package(cisstICP REQUIRED)
+  find_package(sawOpenIGTLink REQUIRED)
 
   include_directories (
     ${CMAKE_BINARY_DIR}
     ${sawIntuitiveResearchKit_INCLUDE_DIR}
     ${sawControllers_INCLUDE_DIR}
     ${sawConstraintController_INCLUDE_DIR}
-    ${cisstICP_INCLUDE_DIR})
+    ${sawOpenIGTLink_INCLUDE_DIR})
 
   link_directories (
     ${sawIntuitiveResearchKit_LIBRARY_DIR}
     ${sawControllers_LIBRARY_DIR}
     ${sawConstraintController_LIBRARY_DIR}
-    ${cisstICP_LIBRARY_DIR})
+    ${sawOpenIGTLink_LIBRARY_DIR})
 
   set (dvrk_mesh_vf_INCLUDE_DIR
         "${dvrk_mesh_vf_SOURCE_DIR}/include")
@@ -106,11 +109,11 @@ if (cisst_FOUND)
                         ${sawIntuitiveResearchKit_LIBRARIES}
                         ${sawControllers_LIBRARIES}
                         ${sawConstraintController_LIBRARIES}
-                        ${cisstICP_LIBRARIES})
+                        ${sawOpenIGTLink_LIBRARIES})
   target_link_libraries (simpleTeleop
                         ${sawControllers_LIBRARIES}
                         ${sawConstraintController_LIBRARIES}
-                        ${cisstICP_LIBRARIES}
+                        ${sawOpenIGTLink_LIBRARIES}
                         ${catkin_LIBRARIES})
 
   configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/dvrk_mesh_vfConfig.cmake.in"

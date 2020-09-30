@@ -66,9 +66,9 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
         SetupVF();
 
         // teleop needs to tell us if constraint motion is enabled or not
-        CMN_ASSERT(RobotInterface);
-        RobotInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
-        RobotInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::GetSimulation, this, "GetSimulation");
+        CMN_ASSERT(m_arm_interface);
+        m_arm_interface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
+        m_arm_interface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::GetSimulation, this, "GetSimulation");
     }
 }
 
@@ -102,7 +102,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
 
     /****** The following are defined in the skull coordinate frame, which will be transformed into PSM coordinate frame *******/
     // mesh constraint
-    mMeshFile = cisstMesh(0.5,true); // 0.5 mm error for PSM
+    mMeshFile = msh3Mesh(0.5,true); // 0.5 mm error for PSM
     if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/dvrk_mesh_vf/mesh/Skull.stl")==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
@@ -132,7 +132,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupRobot()
     // robot related data
     mMeasuredKinematics.Name="MeasuredKinematics";
     mMeasuredKinematics.Jacobian.SetSize(mNumDof, mNumJoints);
-    mMeasuredKinematics.JointState = &StateJointKinematics; // see mtsIntuitiveResearchKitArm
+    mMeasuredKinematics.JointState = &m_kin_measured_js; // see mtsIntuitiveResearchKitArm
     // joint already updated by BaseType::GetRobotData() which is called by RunAllState
 
     mGoalKinematics.Name="GoalKinematics";
@@ -158,10 +158,10 @@ nmrConstraintOptimizer::STATUS mtsDerivedIntuitiveResearchKitPSM::Solve(vctDoubl
 void mtsDerivedIntuitiveResearchKitPSM::UpdateOptimizerKinematics()
 {
     // update cartesian position and jacobian
-    mMeasuredKinematics.Frame.FromNormalized(CartesianGet); // see mtsIntuitiveResearchKitArm
+    mMeasuredKinematics.Frame.FromNormalized(m_measured_cp_frame); // see mtsIntuitiveResearchKitArm
 
     // transform jacobian
-    Jacobian::ChangeBase(mJacobianBody,CartesianGet,mJacobianBodyBase);
+    Jacobian::ChangeBase(m_body_jacobian,m_measured_cp_frame,mJacobianBodyBase);
     mMeasuredKinematics.Jacobian.Assign(mJacobianBodyBase);
 
     // set goal cartesian position
@@ -181,9 +181,9 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
     }
     // constraint motion
     else{
-        if (mHasNewPIDGoal) {
+        if (m_new_pid_goal) {
             // copy current position
-            vctDoubleVec jointPosition(StateJointKinematics.Position());
+            vctDoubleVec jointPosition(m_kin_measured_js.Position());
 
             // numerical solve
             vctDoubleVec jointInc, jointSlack;
@@ -198,7 +198,7 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
             }
 
             // reset flag
-            mHasNewPIDGoal = false;
+            m_new_pid_goal = false;
         }
     }
 }
@@ -208,8 +208,8 @@ void mtsDerivedIntuitiveResearchKitPSM::GetRobotData()
     BaseType::GetRobotData();
 
     // add proxy position update
-    if (mJointReady && mCartesianReady && mHasNewPIDGoal){
-        mProxyCartesianPosition.SetTimestamp(StateJointKinematics.Timestamp());
+    if (IsJointReady() && IsCartesianReady() && m_new_pid_goal){
+        mProxyCartesianPosition.SetTimestamp(m_kin_measured_js.Timestamp());
         mProxyCartesianPosition.SetValid(BaseFrameValid);
         mProxyCartesianPosition.Position().From(CartesianSetParam.Goal());
     }
@@ -238,7 +238,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSimulation(const bool &status)
 
 void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &transform)
 {
-    if (!mConstraintMotionEnabled && (mPowered || mSimulated)){ // register when the constraint motion is not enabled (prevent receiving multiple times) and when the arm is powered
+    if (!mConstraintMotionEnabled && (m_powered || mSimulated)){ // register when the constraint motion is not enabled (prevent receiving multiple times) and when the arm is powered
         std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
 
         // recompute skull coordinates
@@ -252,7 +252,7 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
         if (mConstraintMotionEnabled){
             CMN_LOG_CLASS_RUN_ERROR << "Constraint motion already enabled, reset the flag to receive new registration" << std::endl;
         }
-        if (!mPowered){
+        if (!m_powered){
             CMN_LOG_CLASS_RUN_ERROR << "Arm is not powered" << std::endl;
         }
 
