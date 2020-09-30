@@ -1,7 +1,7 @@
 # PolygonMeshVirtualFixture
 
 
-This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to automatically generate complex virtual fixtures for arbitrary geometries given a polygon mesh (STL) file. The framework is applicable to all CISST-based robots. This repo contains [an interactive demo]() as well as example code of the virtual fixture working with dVRK.
+This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to automatically generate complex virtual fixtures for arbitrary geometries given a polygon mesh (STL) file. The framework is applicable to all CISST-based robots. This repo contains [an interactive demo](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#interactive-demo---simple-teleop) as well as example code of the virtual fixture working with [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#dvrk).
 ![](media/demo.gif)
 
 
@@ -66,7 +66,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
 
 ## Log
-- 2020.09.21: We have moved core funcitonalities of handling mesh into CISST library as cisst-mesh component in branch [feature-crtk](https://github.com/jhu-cisst/cisst/tree/feature-crtk). We are working on upgrading the exisitng code base to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
+- 2020.09.21: We have moved core funcitonalities of handling mesh into CISST library as cisst-mesh component in branch [devel](https://github.com/jhu-cisst/cisst/tree/devel). We are working on upgrading the exisitng code base to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
 - 2020.07.15: We are working on integrating some of the core components into [JHU-CISST Library](https://github.com/jhu-cisst/cisst) for minimal dependencies.
 
 ## Acknowledgement
