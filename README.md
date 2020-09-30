@@ -1,7 +1,7 @@
 # PolygonMeshVirtualFixture
 
 
-This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to automatically generate complex virtual fixtures for arbitrary geometries given a polygon mesh (STL) file. The framework is applicable to all CISST-based robots. This repo contains [an interactive demo](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#interactive-demo---simple-teleop) as well as example code of the virtual fixture working with [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#dvrk).
+This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to **automatically generate arbitrary complex virtual fixtures** for any geometries given a polygon mesh (STL) file. The framework is integrated with core CISST-SAW libraries, thus applicable to all CISST-based robots including dVRK and UR. To apply virtual fixture to your robot, there are very few lines needed to change in your control code. This repo contains [an interactive demo](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#interactive-demo---simple-teleop) as well as example code of the virtual fixture working with [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#dvrk).
 ![](media/demo.gif)
 
 
@@ -18,7 +18,10 @@ If you use our code, please cite
 We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
 
 ## Dependencies
-- **3D Slicer**: We use 3D Slicer as a front end for visualization. It is required to use 3D Slicer 4.8.1 for OpenIGTLink compatibility. To download, please use link [here](http://slicer.kitware.com/midas3/download/item/330417/Slicer-4.8.1-linux-amd64.tar.gz).
+- **3D Slicer**: We use 3D Slicer as a front end for visualization. It is required to use 3D Slicer 4.8.1 for OpenIGTLink compatibility. To download, please use this link [here](http://slicer.kitware.com/midas3/download/item/330417/Slicer-4.8.1-linux-amd64.tar.gz) and extract the files. Double click on the executable named `Slicer` to run 3D Slicer.
+- **OpenIGTLink**: We use OpenIGTLink to communicate between 3D Slicer and CISST robot. To install, follow instruction [here](http://openigtlink.org/library/build). 
+    - Note: you will need to `make install` after compiling the code.
+    - Note: you will need to install the `SlicerIGT` extension in 3D Slicer. Please see [here](https://www.slicer.org/wiki/Documentation/4.8/SlicerApplication/ExtensionsManager#Installing_an_extension) for how to do so.
 - **ROS**: To install ROS, pleaes follow instruction [here](http://wiki.ros.org/melodic/Installation/Ubuntu)
 - **Third-Party Packages**: Please install by
 ```sh
