@@ -43,10 +43,10 @@ catkin build # ... and finally compile everything
 
 ## To run the demo
 ### Visualization
-- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servoed position (i.e. commanded position from the MTM or keyboard) and the blue sphere represents the measured position (i.e. actual position with virtual fixture constraints). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
+- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servo-ed position (i.e. commanded position from the MTM or mouse) and the blue sphere represents the measured position (i.e. actual position with virtual fixture imposed). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
 
 ![](media/visualization_slicer.png)
-- Connect to ROS-IGTL-Bridge by going to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
+- Connect to ROS-IGTL-Bridge by navigating to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
 
 ![](media/igtl_bridge_activate.png)
 
@@ -55,6 +55,8 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
+- Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
+![](media/send_transform.png)
 - To control the position, drag the red point. 
 ![](media/simple_teleop_demo.gif)
 
@@ -64,6 +66,8 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start roscore by `roscore`.
 - Base on the file `share/console-MTMR-PSM2Derived-TeleopDerived.json`, create a configuraiton file that matches your MTMR and PSM2 (or MTML and PSM1) serial number.
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
+- Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
+![](media/send_transform.png)
 
 ## Log
 - 2020.09.21: We have moved core funcitonalities of handling mesh into CISST library as cisst-mesh component in branch [devel](https://github.com/jhu-cisst/cisst/tree/devel). We are working on upgrading the exisitng code base to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
