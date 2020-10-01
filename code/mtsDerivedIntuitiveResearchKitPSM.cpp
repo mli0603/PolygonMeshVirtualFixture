@@ -220,9 +220,10 @@ void mtsDerivedIntuitiveResearchKitPSM::GetRobotData()
         mProxyCartesianPosition.SetValid(BaseFrameValid);
         mProxyCartesianPosition.Position().From(CartesianSetParam.Goal());
 
-        mProxyCaertesianTranslation.Assign(mProxyCartesianPosition.Position().Translation()).Multiply(cmn_mm/cmn_m);
-        mMeasuredCartesianTranslation.Assign(m_measured_cp_frame.Translation()).Multiply(cmn_mm/cmn_m);
+        mProxyCaertesianTranslation.Assign(mProxyCartesianPosition.Position().Translation()).Multiply(cmn_m/cmn_mm);
     }
+
+    mMeasuredCartesianTranslation.Assign(m_measured_cp_frame.Translation()).Multiply(cmn_m/cmn_mm);
 }
 
 void mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable(const bool &status)

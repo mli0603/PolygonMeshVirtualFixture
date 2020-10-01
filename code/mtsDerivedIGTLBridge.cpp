@@ -2,6 +2,9 @@
 #include <sawOpenIGTLink/mtsIGTLToCISST.h>
 #include <mtsDerivedIGTLBridge.h>
 
+CMN_IMPLEMENT_SERVICES_DERIVED_ONEARG(mtsDerivedIGTLBridge,
+                                      mtsIGTLBridge,
+                                      mtsTaskPeriodicConstructorArg);
 
 mtsDerivedIGTLBridge::mtsDerivedIGTLBridge(const std::string &componentName, const double periodInSeconds):
     mtsIGTLBridge(componentName,periodInSeconds)
