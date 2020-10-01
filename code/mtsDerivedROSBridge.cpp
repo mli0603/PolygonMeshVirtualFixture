@@ -74,7 +74,6 @@ void mtsDerivedROSBridge::Configure(const std::string &filename)
                 std::string mtsFunction = jsonValue["mts_function"].asString();
                 std::string topicName = jsonValue["topic_name"].asString();
 
-                std::cout << cisstType << rosType << mtsFunction << topicName << std::endl;
                 if (cisstType == "bool" && rosType == "std_msgs::Bool"){
                     this->AddSubscriberToCommandWrite<bool,std_msgs::Bool>(interfaceName,
                                                                              mtsFunction,
@@ -103,8 +102,6 @@ void mtsDerivedROSBridge::Configure(const std::string &filename)
                 std::string rosType = jsonValue["ros_type"].asString();
                 std::string mtsFunction = jsonValue["mts_function"].asString();
                 std::string topicName = jsonValue["topic_name"].asString();
-
-                std::cout << cisstType << rosType << mtsFunction << topicName << std::endl;
 
                 if (cisstType == "bool" && rosType == "std_msgs::Bool"){
                     this->AddPublisherFromCommandRead<bool,std_msgs::Bool>(interfaceName,

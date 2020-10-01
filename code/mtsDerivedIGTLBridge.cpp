@@ -96,8 +96,6 @@ void mtsDerivedIGTLBridge::Configure(const std::string &filename)
                 std::string mtsFunction = jsonValue["mts_function"].asString();
                 std::string topicName = jsonValue["topic_name"].asString();
 
-                std::cout << cisstType << igtlType << mtsFunction << topicName << std::endl;
-
                 if (cisstType == "vct3" && igtlType == "igtl::PointMessage"){
                     this->AddSenderFromCommandRead<vct3, igtl::PointMessage>(interfaceName,
                                                                             mtsFunction,
