@@ -23,8 +23,10 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOpenIGTLink/mtsCISSTToIGTL.h>
 #include <sawOpenIGTLink/mtsIGTLToCISST.h>
 #include <sawOpenIGTLink/mtsIGTLBridge.h>
+#include <ros/ros.h>
+#include <cisstCommon/cmnGetChar.h>
 
-int main(){
+int main(int argc, char ** argv){
     // log configuration
     cmnLogger::SetMask(CMN_LOG_ALLOW_ALL);
     cmnLogger::SetMaskDefaultLog(CMN_LOG_ALLOW_ALL);
@@ -32,26 +34,29 @@ int main(){
     cmnLogger::AddChannel(std::cerr, CMN_LOG_ALLOW_ERRORS_AND_WARNINGS);
 
     // component manager
-    mtsComponentManager * componentManger = mtsComponentManager::GetInstance();
+    mtsComponentManager * componentManager = mtsComponentManager::GetInstance();
 
     // create robot
     simpleTeleop robot("SimpleRobot",20*cmn_ms);
 
     // add robot to manager
-    componentManger->AddComponent(&robot);
+    componentManager->AddComponent(&robot);
 
+    // create ROS node handle
+    ros::init(argc, argv, "simpleRobot", ros::init_options::AnonymousName);
+    ros::NodeHandle rosNodeHandle;
     // add ros bridge
-    mtsROSBridge * subscribers = new mtsROSBridge("subscribers", 0.1 * cmn_ms, true /* spin */);
+    mtsROSBridge * subscribers = new mtsROSBridge("subscribers", 0.1 * cmn_ms, &rosNodeHandle);
     subscribers->AddSubscriberToCommandWrite<vctFrm4x4, geometry_msgs::PoseStamped>("RequiresSimpleRobot",
                                                                                     "ServoCartesianPosition",
                                                                                     "/simple_robot/servo_cp");
 
-    componentManger->AddComponent(subscribers);
-    mtsROSBridge * publishers = new mtsROSBridge("publishers", 5 * cmn_ms);
+    componentManager->AddComponent(subscribers);
+    mtsROSBridge * publishers = new mtsROSBridge("publishers", 5 * cmn_ms, &rosNodeHandle);
     publishers->AddPublisherFromCommandRead<prmPositionCartesianGet, geometry_msgs::PoseStamped>("RequiresSimpleRobot",
                                                                                                  "GetMeasuredCartesianPosition",
                                                                                                  "/simple_robot/measured_cp");
-    componentManger->AddComponent(publishers);
+    componentManager->AddComponent(publishers);
 
     // add openIgtlink
     mtsIGTLBridge * igtlBridge = new mtsIGTLBridge("simpleTelop-igtl", 5 * cmn_ms);
@@ -66,32 +71,34 @@ int main(){
                                                                                            "Skull To PSM");
 
     igtlBridge->SetPort(18944);
-    componentManger->AddComponent(igtlBridge);
+    componentManager->AddComponent(igtlBridge);
 
     // connect componentsS
-    componentManger->Connect(subscribers->GetName(), "RequiresSimpleRobot",
+    componentManager->Connect(subscribers->GetName(), "RequiresSimpleRobot",
                              robot.GetName(), "ProvidesSimpleRobot");
-    componentManger->Connect(publishers->GetName(), "RequiresSimpleRobot",
+    componentManager->Connect(publishers->GetName(), "RequiresSimpleRobot",
                              robot.GetName(), "ProvidesSimpleRobot");
-    componentManger->Connect(igtlBridge->GetName(), "RequiresSimpleRobot",
+    componentManager->Connect(igtlBridge->GetName(), "RequiresSimpleRobot",
                              robot.GetName(), "ProvidesSimpleRobot");
 
     // create components
-    componentManger->CreateAll();
-    componentManger->WaitForStateAll(mtsComponentState::READY, 2.0*cmn_s);
+    componentManager->CreateAllAndWait(2.0*cmn_s);
 
     // start periodic run
-    componentManger->StartAll();
-    componentManger->WaitForStateAll(mtsComponentState::ACTIVE, 2.0*cmn_s);
+    componentManager->StartAllAndWait(2.0*cmn_s);
 
     // ros::spin() callback for subscribers
-    ros::spin();
+//    ros::spin();
+    do {
+        std::cout << "Press 'q' to quit" << std::endl;
+    } while (cmnGetChar() != 'q');
 
     // cleanup
-    componentManger->KillAll();
-    componentManger->WaitForStateAll(mtsComponentState::FINISHED, 2.0 * cmn_s);
+    componentManager->KillAllAndWait(2.0 * cmn_s);
+    componentManager->Cleanup();
 
-    componentManger->Cleanup();
+    // stop ROS node
+    ros::shutdown();
 
     return 0;
 }

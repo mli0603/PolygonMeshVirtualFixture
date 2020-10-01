@@ -55,9 +55,7 @@ void simpleTeleop::setupRobot() {
     // joint values
     mJointPosition.SetSize(mNumJoints);
     mJointPosition.SetAll(0.0); // for inverse sphere
-    mJointPosition.Ref(3,0).Assign(0.0, 50.0, 0.0).Multiply(cmn_mm); // for normal objects
-//    mJointPosition.Ref(3,0).Assign(-30.0, -30.0, -30.0).Multiply(cmn_mm); // for inverse objects
-//    mJointPosition.Ref(3,0).Assign(-50.0, -50.0, 35.0).Multiply(cmn_mm); // for inverse pyramid
+    mJointPosition.Ref(3,0).Assign(200.0, 10.0, 70.0).Multiply(cmn_mm);
 
     // fixed jacobian
     mJacobian.SetSize(mNumDof,mNumJoints);
