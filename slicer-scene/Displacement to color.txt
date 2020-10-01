@@ -1,0 +1,3 @@
+# Color procedural file /home/max/cisst_mesh_ws/src/PolygonMeshVirtualFixture/slicer-scene/Displacement to color.txt
+# 0 points
+# position R G B
