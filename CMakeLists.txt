@@ -92,6 +92,8 @@ if (cisst_FOUND)
               "include/robHelper.h"
               "code/mtsDerivedROSBridge.cpp"
               "include/mtsDerivedROSBridge.h"
+              "code/mtsDerivedIGTLBridge.cpp"
+              "include/mtsDerivedIGTLBridge.h"
               )
 
   add_executable(simpleTeleop

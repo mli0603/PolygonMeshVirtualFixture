@@ -42,6 +42,9 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
     if (filename.empty()){
         // for ros communication
         this->StateTable.AddData(mProxyCartesianPosition, "ProxyCartesianPosition");
+        // for igtl communication
+        this->StateTable.AddData(mMeasuredCartesianTranslation, "MeasuredCartesianTranslation");
+        this->StateTable.AddData(mProxyCaertesianTranslation, "ProxyCaertesianTranslation");
 
         mtsInterfaceProvided * derivedRosInterface = AddInterfaceProvided("providesPSM2");
         if (derivedRosInterface){
@@ -57,6 +60,10 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
             derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
             // set mesh constraint enable
             derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetMeshConstraintEnable, this, "SetMeshConstraintEnable");
+
+            derivedRosInterface->AddCommandReadState(this->StateTable, mMeasuredCartesianTranslation, "GetMeasuredCartesianTranslation");
+            derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCaertesianTranslation, "GetServoCartesianTranslation");
+            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransformIGTL, this, "SetSkullToPSMTransformIGTL");
         }
     }
     else{
@@ -212,6 +219,9 @@ void mtsDerivedIntuitiveResearchKitPSM::GetRobotData()
         mProxyCartesianPosition.SetTimestamp(m_kin_measured_js.Timestamp());
         mProxyCartesianPosition.SetValid(BaseFrameValid);
         mProxyCartesianPosition.Position().From(CartesianSetParam.Goal());
+
+        mProxyCaertesianTranslation.Assign(mProxyCartesianPosition.Position().Translation()).Multiply(cmn_mm/cmn_m);
+        mMeasuredCartesianTranslation.Assign(m_measured_cp_frame.Translation()).Multiply(cmn_mm/cmn_m);
     }
 }
 
@@ -244,6 +254,32 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform(const vctFrm4x4 &
         // recompute skull coordinates
         mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
         meshConstraint->TransformMesh(transform,mMeshFile);
+
+        // enable constraint motion
+        mConstraintMotionEnabled = true;
+    }
+    else{
+        if (mConstraintMotionEnabled){
+            CMN_LOG_CLASS_RUN_ERROR << "Constraint motion already enabled, reset the flag to receive new registration" << std::endl;
+        }
+        if (!m_powered){
+            CMN_LOG_CLASS_RUN_ERROR << "Arm is not powered" << std::endl;
+        }
+
+    }
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransformIGTL(const prmPositionCartesianSet &transform)
+{
+    if (!mConstraintMotionEnabled && (m_powered || mSimulated)){ // register when the constraint motion is not enabled (prevent receiving multiple times) and when the arm is powered
+        std::cout << "Skull to PSM transformation received\n" << transform << std::endl;
+
+        // recompute skull coordinates
+        vctFrm4x4 f;
+        f.From(transform.Goal());
+        f.Translation().Multiply(cmn_mm/cmn_m);
+        mtsVFMesh* meshConstraint = reinterpret_cast<mtsVFMesh*>(mController->VFMap.find(mMesh.Name)->second);
+        meshConstraint->TransformMesh(f,mMeshFile);
 
         // enable constraint motion
         mConstraintMotionEnabled = true;

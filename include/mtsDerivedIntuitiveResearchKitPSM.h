@@ -75,10 +75,13 @@ protected:
     virtual void SetMeshConstraintEnable(const bool & status);
     virtual void SetSimulation(const bool & status);
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
+    virtual void SetSkullToPSMTransformIGTL(const prmPositionCartesianSet & transform);
     virtual void GetSimulation(bool & status) const;
     bool mConstraintMotionEnabled;
     bool mSimulated;
     prmPositionCartesianGet mProxyCartesianPosition;
+    vct3 mMeasuredCartesianTranslation;
+    vct3 mProxyCaertesianTranslation;
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsDerivedIntuitiveResearchKitPSM);
