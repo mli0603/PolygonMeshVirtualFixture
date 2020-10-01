@@ -9,13 +9,11 @@ mtsDerivedROSBridge::mtsDerivedROSBridge(const std::string &componentName, const
     mtsROSBridge(componentName,periodInSeconds)
 {
 
-    std::cout << "constructed from vars" << std::endl;
 }
 
 mtsDerivedROSBridge::mtsDerivedROSBridge(const mtsTaskPeriodicConstructorArg &arg):
     mtsROSBridge(arg)
 {
-    std::cout << "constructed from args" << std::endl;
 
 }
 
@@ -49,7 +47,6 @@ void mtsDerivedROSBridge::Configure(const std::string &filename)
         for (unsigned int index = 0; index < jsonSubscriber.size(); ++index) {
             jsonValue = jsonSubscriber[index];
             std::string interfaceName = jsonValue["interface"].asString();
-            std::cout << "interface name " << interfaceName << std::endl;
 
             const Json::Value jsonTopics = jsonValue["topics"];
             for (unsigned int index = 0; index < jsonTopics.size(); ++index) {
@@ -80,7 +77,6 @@ void mtsDerivedROSBridge::Configure(const std::string &filename)
         for (unsigned int index = 0; index < jsonPublisher.size(); ++index) {
             jsonValue = jsonPublisher[index];
             std::string interfaceName = jsonValue["interface"].asString();
-            std::cout << "interface name " << interfaceName << std::endl;
 
             const Json::Value jsonTopics = jsonValue["topics"];
             for (unsigned int index = 0; index < jsonTopics.size(); ++index) {

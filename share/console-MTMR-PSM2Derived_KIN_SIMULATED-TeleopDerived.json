@@ -27,27 +27,27 @@
                 "shared-library": "dvrk_mesh_vf",
                 "class-name": "mtsDerivedROSBridge",
                 "constructor-arg": {
-                    "Name": "Publisher",
+                    "Name": "ros-Bridge",
                     "Period": 0.1
                 },
-                "configure-parameter": "rosBridgePublisher.json"
+                "configure-parameter": "rosBridge.json"
             }
             ,
             {
                 "shared-library": "dvrk_mesh_vf",
-                "class-name": "mtsDerivedROSBridge",
+                "class-name": "mtsDerivedIGTLBridge",
                 "constructor-arg": {
-                    "Name": "Subscriber",
+                    "Name": "igtl-Bridge",
                     "Period": 0.1
                 },
-                "configure-parameter": "rosBridgeSubscriber.json"
+                "configure-parameter": "igtlBridge.json"
             }
         ],
         "connections":
         [
             {
                 "required":{
-                    "component": "Publisher",
+                    "component": "ros-Bridge",
                     "interface": "requiresPSM2" 
                 },
                 "provided":{
@@ -57,7 +57,7 @@
             },
             {
                 "required":{
-                    "component": "Subscriber",
+                    "component": "igtl-Bridge",
                     "interface": "requiresPSM2" 
                 },
                 "provided":{

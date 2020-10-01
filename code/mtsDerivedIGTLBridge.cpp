@@ -48,7 +48,6 @@ void mtsDerivedIGTLBridge::Configure(const std::string &filename)
         for (unsigned int index = 0; index < jsonReciever.size(); ++index) {
             jsonValue = jsonReciever[index];
             std::string interfaceName = jsonValue["interface"].asString();
-            std::cout << "interface name " << interfaceName << std::endl;
 
             const Json::Value jsonTopics = jsonValue["topics"];
             for (unsigned int index = 0; index < jsonTopics.size(); ++index) {
@@ -70,7 +69,6 @@ void mtsDerivedIGTLBridge::Configure(const std::string &filename)
         for (unsigned int index = 0; index < jsonSender.size(); ++index) {
             jsonValue = jsonSender[index];
             std::string interfaceName = jsonValue["interface"].asString();
-            std::cout << "interface name " << interfaceName << std::endl;
 
             const Json::Value jsonTopics = jsonValue["topics"];
             for (unsigned int index = 0; index < jsonTopics.size(); ++index) {
