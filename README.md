@@ -5,7 +5,7 @@ This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures fo
 ![](media/demo.gif)
 
 
-If you use our code, please cite
+If you find our work relevant, please cite
 ```
 @article{li2020anatomical,
   title={Anatomical Mesh-Based Virtual Fixtures for Surgical Robots},
@@ -24,10 +24,10 @@ We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
     - Note: you will need to install the `SlicerIGT` extension in 3D Slicer. Please see [here](https://www.slicer.org/wiki/Documentation/4.8/SlicerApplication/ExtensionsManager#Installing_an_extension) for how to do so.
 - **ROS**: To install ROS, pleaes follow instruction [here](http://wiki.ros.org/melodic/Installation/Ubuntu)
 - **Third-Party Packages**: Please install by
-```sh
-sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
-sudo apt install python-wstool python-catkin-tools # catkin and wstool for ROS build
-```
+  ```sh
+  sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
+  sudo apt install python-wstool python-catkin-tools # catkin and wstool for ROS build
+  ```
 
 ## Compilation
 Please follow the following system command
@@ -48,10 +48,10 @@ catkin build # ... and finally compile everything
 ### Visualization
 - Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servo-ed position (i.e. commanded position from the MTM or mouse) and the blue sphere represents the measured position (i.e. actual position with virtual fixture imposed). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
 
-![](media/visualization_slicer.png)
+  ![](media/visualization_slicer.png)
 - Connect to ROS-IGTL-Bridge by navigating to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
 
-![](media/igtl_bridge_activate.png)
+  ![](media/igtl_bridge_activate.png)
 
 ### Interactive Demo - Simple teleop 
 This interactive demo runs a simple teleoperation "robot" where the robot position (blue point) is controlled by the red point. Drag the red point to move the robot around. The robot is subject to the mesh virtual fixture, thus it cannot penatrate the skull.
@@ -63,7 +63,6 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - To control the position, drag the red point. 
 ![](media/simple_teleop_demo.gif)
 
-
 ### dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 - Start roscore by `roscore`.
@@ -72,7 +71,45 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 ![](media/send_transform.png)
 
+### Simulated dVRK
+- Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
+- Start roscore by `roscore`.
+- Start the simulated console by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json.` Optionally, you can visualize the PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2.`
+- Emulate operator present by
+  ```
+  rostopic pub -1 /console/emulate_operator_present sensor_msgs/Joy "header:
+    seq: 0
+    stamp:
+      secs: 0
+      nsecs: 0
+    frame_id: ''
+  axes:
+  - 0
+  buttons:
+  - 1" 
+  ```
+- Inform teleoperation logic that PSM is simulated by `rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"`
+- In the console, 
+    - Home the robot.
+      
+      ![](media/dvrk_console_home.png)
+    - Start teleoperation.
+  
+      ![](media/dvrk_console_start_teleop.png)
+    - Enable `Direct control` by checking the box.
+    ![](media/dvrk_console_direct_control.png)
+    - Adjust the second joint such that its value is 20.
+        - NOTE: you have to set it to 10 then 20 to avoid large joint motion.
+    ![](media/dvrk_console_move_joint.gif)
+    - Now you should see the tool tip is above the skull in 3D Slicer.
+- Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
+![](media/send_transform.png)
+- In the console, 
+    - Adjust the second joint such that its value is 10
+    - Now you should see the tool tip (blue sphere) is stopped at the exterior of the skull in 3D Slicer, while the MTM (red sphere) passes through the skull, demonstrating VF is working.
+
 ## Log
+- 2020.10.06: We have finished upgrading our code to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
 - 2020.09.21: We have moved core funcitonalities of handling mesh into CISST library as cisst-mesh component in branch [devel](https://github.com/jhu-cisst/cisst/tree/devel). We are working on upgrading the exisitng code base to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
 - 2020.07.15: We are working on integrating some of the core components into [JHU-CISST Library](https://github.com/jhu-cisst/cisst) for minimal dependencies.
 
