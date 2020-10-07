@@ -1,9 +1,8 @@
-# PolygonMeshVirtualFixture
-
+# Anatomical Mesh-Based Virtual Fixtures for Surgical Robots
 
 This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to **automatically generate arbitrary complex virtual fixtures** for any geometries given a polygon mesh (STL) file. The framework is integrated with core CISST-SAW libraries, thus applicable to all CISST-based robots including dVRK and UR. To apply virtual fixture to your robot, there are very few lines needed to change in your control code. This repo contains [an interactive demo](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#interactive-demo---simple-teleop) as well as example code of the virtual fixture working with [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#dvrk).
 
-![](media/demo.gif)
+> ![](media/demo.gif)
 
 
 If you find our work relevant, please cite
@@ -56,10 +55,10 @@ catkin build # ... and finally compile everything
 ### Visualization
 - Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servo-ed position (i.e. commanded position from the MTM or mouse) and the blue sphere represents the measured position (i.e. actual position with virtual fixture imposed). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
 
-  ![](media/visualization_slicer.png)
+  > ![](media/visualization_slicer.png)
 - Connect to ROS-IGTL-Bridge by navigating to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
 
-  ![](media/igtl_bridge_activate.png)
+  > ![](media/igtl_bridge_activate.png)
 
 ### Interactive Demo - Simple teleop 
 This interactive demo runs a simple teleoperation "robot" where the robot position (blue sphere) is controlled by the red sphere. Drag the red sphere to move the robot around. The robot is subject to the mesh virtual fixture, thus it cannot penatrate the skull.
@@ -68,10 +67,10 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
-  ![](media/send_transform.png)
+  > ![](media/send_transform.png)
 - To control the robot position (blue sphere), drag the red sphere. 
 
-  ![](media/simple_teleop_demo.gif)
+  > ![](media/simple_teleop_demo.gif)
 
 ### dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
@@ -80,7 +79,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
-  ![](media/send_transform.png)
+  > ![](media/send_transform.png)
 
 ### Simulated dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
@@ -88,7 +87,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start the simulated console by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json.` Optionally, you can visualize the PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2.`
 - Inform teleoperation logic that PSM is simulated by `rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"`
 
-<img src="media/dvrk_console_home.png" align="right" width="108" height="274">
+<img src="media/dvrk_console_home.png" align="right" width="120" height="308">
 
 - In the console, first setup teleoperation 
 
@@ -96,17 +95,17 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
   2. Enable `Operator`
   3. `Home` the robot
   4. `Start` teleoperation.
-</br></br>
+</br></br></br></br>
   
 - Move the second joint of MTM such that its value is 20. This step moves the tip above the skull.
   - Enable `Direct Control` in `MTMR` tab.
   - Change the joint value, click `Move`.
     - NOTE: you have to set it to 10 then 20 to avoid large joint motion.
   - Now you should see the tool tip is above the skull in 3D Slicer.
-  ![](media/dvrk_console_move_joint.gif)
+  > ![](media/dvrk_console_move_joint.gif)
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
-  ![](media/send_transform.png)
+  > ![](media/send_transform.png)
 - In the console, 
   - Adjust the second joint such that its value is 10
   - Now you should see the tool tip (blue sphere) is stopped at the exterior of the skull in 3D Slicer, while the MTM (red sphere) passes through the skull, demonstrating VF is working.
