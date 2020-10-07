@@ -15,12 +15,12 @@ If you find our work relevant, please cite
 }
 ```
 ## Table of Content
-- [System Requirment](https://github.com/mli0603/PolygonMeshVirtualFixture#system-requirement)
+- [System Requirement](https://github.com/mli0603/PolygonMeshVirtualFixture#system-requirement)
 - [Dependencies](https://github.com/mli0603/PolygonMeshVirtualFixture#dependencies)
 - [Compilation](https://github.com/mli0603/PolygonMeshVirtualFixture#compilation)
 - [To run the demo](https://github.com/mli0603/PolygonMeshVirtualFixture#to-run-the-demo)
 - [Log](https://github.com/mli0603/PolygonMeshVirtualFixture#log)
-- [Acknoledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
+- [Acknowledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
 ## System Requirement
 We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
 
