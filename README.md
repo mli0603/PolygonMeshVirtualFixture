@@ -60,8 +60,10 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
+
 ![](media/send_transform.png)
 - To control the robot position (blue sphere), drag the red sphere. 
+
 ![](media/simple_teleop_demo.gif)
 
 ### dVRK
@@ -70,6 +72,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Base on the file `share/console-MTMR-PSM2Derived-TeleopDerived.json`, create a configuraiton file that matches your MTMR and PSM2 (or MTML and PSM1) serial number.
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
+
 ![](media/send_transform.png)
 
 ### Simulated dVRK
@@ -104,6 +107,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
     ![](media/dvrk_console_move_joint.gif)
     - Now you should see the tool tip is above the skull in 3D Slicer.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
+
 ![](media/send_transform.png)
 - In the console, 
     - Adjust the second joint such that its value is 10
