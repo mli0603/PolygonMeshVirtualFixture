@@ -77,6 +77,7 @@ protected:
     virtual void SetSkullToPSMTransform(const vctFrm4x4 & transform);
     virtual void SetSkullToPSMTransformIGTL(const prmPositionCartesianSet & transform);
     virtual void GetSimulation(bool & status) const;
+    virtual void DummyReceiver(const vct3 & dummy);
     bool mConstraintMotionEnabled;
     bool mSimulated;
     prmPositionCartesianGet mProxyCartesianPosition;

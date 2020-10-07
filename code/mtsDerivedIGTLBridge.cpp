@@ -80,6 +80,11 @@ void mtsDerivedIGTLBridge::Configure(const std::string &filename)
                                                                                                      mtsFunction,
                                                                                                      topicName);
                 }
+                if (cisstType == "vct3" && igtlType == "igtl::PointMessage"){
+                    this->AddReceiverToCommandWrite<igtl::PointMessage, vct3>(interfaceName,
+                                                                              mtsFunction,
+                                                                              topicName);
+                }
             }
         }
 

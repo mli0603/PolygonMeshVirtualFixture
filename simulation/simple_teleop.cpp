@@ -110,7 +110,11 @@ void simpleTeleop::setupVF() {
 
     // mesh constraint
     mMeshFile = msh3Mesh(true); // error in mm
-    if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/dvrk_mesh_vf/mesh/Skull.stl")==-1){
+    std::string filePath = __FILE__;
+    filePath.erase(filePath.end()-28,filePath.end());
+    filePath.append("mesh/Skull.stl");
+
+    if (mMeshFile.LoadMeshFromSTLFile(filePath)==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
     }

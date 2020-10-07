@@ -43,18 +43,6 @@
                 },
                 "configure-parameter": "igtlBridge.json"
             }
-            ,
-            // this is just to get "foot pedals", no needed on a
-            // physical dVRK system
-            {
-                "shared-library": "sawKeyboard",
-                "class-name": "mtsKeyboard",
-                "constructor-arg": {
-                    "Name": "Keyboard"
-                }
-                ,
-                "configure-parameter": "sawKeyboard-dVRK-console.json"
-            }
         ],
         "connections":
         [
@@ -81,19 +69,9 @@
         ]
     }
     ,
-    // if you're using a dVRK with physical foot pedals you can remove
-    // this
-    "console-inputs":
+    "io":
     {
-        "operator-present": {
-            "component": "Keyboard",
-            "interface": "OperatorPresent" // see file keyboard-dVRK-console.json
-        }
-        ,
-        "clutch": {
-            "component": "Keyboard",
-            "interface": "Clutch"
-        }
+        "physical-footpedals-required": false
     }
     ,
     "arms":
@@ -134,7 +112,10 @@
             // loaded teleop, using "type"
             "type": "TELEOP_PSM_DERIVED",
             "mtm": "MTMR",
-            "psm": "PSM2"
+            "psm": "PSM2",
+            "configure-parameter": {
+                "start-gripper-threshold": 0.0 // to start automatically when operator is present
+            }
         }
     ]
 }

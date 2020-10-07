@@ -46,24 +46,25 @@ void mtsDerivedIntuitiveResearchKitPSM::Configure(const std::string &filename)
         this->StateTable.AddData(mMeasuredCartesianTranslation, "MeasuredCartesianTranslation");
         this->StateTable.AddData(mProxyCaertesianTranslation, "ProxyCaertesianTranslation");
 
-        mtsInterfaceProvided * derivedRosInterface = AddInterfaceProvided("providesPSM2");
-        if (derivedRosInterface){
+        mtsInterfaceProvided * bridgeInterface = AddInterfaceProvided("providesPSM2");
+        if (bridgeInterface){
             // read constraint motion status
-            derivedRosInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable, this, "ReadConstraintMotionEnable");
+            bridgeInterface->AddCommandRead(&mtsDerivedIntuitiveResearchKitPSM::ReadConstraintMotionEnable, this, "ReadConstraintMotionEnable");
             // set constraint motion status
-            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
+            bridgeInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetConstraintMotionEnable, this, "SetConstraintMotionEnable");
             // set simulation status
-            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSimulation, this, "SetSimulation");
+            bridgeInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSimulation, this, "SetSimulation");
             // read proxy location
-            derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCartesianPosition, "GetProxyPositionCartesian");
+            bridgeInterface->AddCommandReadState(this->StateTable, mProxyCartesianPosition, "GetProxyPositionCartesian");
             // set skull to psm transform
-            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
+            bridgeInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransform, this, "SetSkullToPSMTransform");
             // set mesh constraint enable
-            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetMeshConstraintEnable, this, "SetMeshConstraintEnable");
+            bridgeInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetMeshConstraintEnable, this, "SetMeshConstraintEnable");
 
-            derivedRosInterface->AddCommandReadState(this->StateTable, mMeasuredCartesianTranslation, "GetMeasuredCartesianTranslation");
-            derivedRosInterface->AddCommandReadState(this->StateTable, mProxyCaertesianTranslation, "GetServoCartesianTranslation");
-            derivedRosInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransformIGTL, this, "SetSkullToPSMTransformIGTL");
+            bridgeInterface->AddCommandReadState(this->StateTable, mMeasuredCartesianTranslation, "GetMeasuredCartesianTranslation");
+            bridgeInterface->AddCommandReadState(this->StateTable, mProxyCaertesianTranslation, "GetServoCartesianTranslation");
+            bridgeInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransformIGTL, this, "SetSkullToPSMTransformIGTL");
+            bridgeInterface->AddCommandWrite(&mtsDerivedIntuitiveResearchKitPSM::DummyReceiver, this, "DummyReceiver");
         }
     }
     else{
@@ -110,7 +111,11 @@ void mtsDerivedIntuitiveResearchKitPSM::SetupVF()
     /****** The following are defined in the skull coordinate frame, which will be transformed into PSM coordinate frame *******/
     // mesh constraint
     mMeshFile = msh3Mesh(0.5,true); // 0.5 mm error for PSM
-    if (mMeshFile.LoadMeshFromSTLFile("/home/max/dvrk_ws/src/dvrk_mesh_vf/mesh/Skull.stl")==-1){
+    std::string filePath = __FILE__;
+    filePath.erase(filePath.end()-42,filePath.end());
+    filePath.append("mesh/Skull.stl");
+    std::cout << filePath << std::endl;
+    if (mMeshFile.LoadMeshFromSTLFile(filePath)==-1){
         CMN_LOG_CLASS_RUN_ERROR << "Cannot load STL file" << std::endl;
         cmnThrow("Cannot load STL file");
     }
@@ -299,4 +304,9 @@ void mtsDerivedIntuitiveResearchKitPSM::SetSkullToPSMTransformIGTL(const prmPosi
 void mtsDerivedIntuitiveResearchKitPSM::GetSimulation(bool &status) const
 {
     status = mSimulated;
+}
+
+void mtsDerivedIntuitiveResearchKitPSM::DummyReceiver(const vct3 &dummy)
+{
+
 }
