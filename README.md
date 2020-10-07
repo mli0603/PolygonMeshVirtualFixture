@@ -54,13 +54,13 @@ catkin build # ... and finally compile everything
   ![](media/igtl_bridge_activate.png)
 
 ### Interactive Demo - Simple teleop 
-This interactive demo runs a simple teleoperation "robot" where the robot position (blue point) is controlled by the red point. Drag the red point to move the robot around. The robot is subject to the mesh virtual fixture, thus it cannot penatrate the skull.
+This interactive demo runs a simple teleoperation "robot" where the robot position (blue sphere) is controlled by the red sphere. Drag the red sphere to move the robot around. The robot is subject to the mesh virtual fixture, thus it cannot penatrate the skull.
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 ![](media/send_transform.png)
-- To control the position, drag the red point. 
+- To control the robot position (blue sphere), drag the red sphere. 
 ![](media/simple_teleop_demo.gif)
 
 ### dVRK
