@@ -15,6 +15,13 @@ If you find our work relevant, please cite
   year={2020}
 }
 ```
+## Table of Content
+- [System Requirment](https://github.com/mli0603/PolygonMeshVirtualFixture#system-requirement)
+- [Dependencies](https://github.com/mli0603/PolygonMeshVirtualFixture#dependencies)
+- [Compilation](https://github.com/mli0603/PolygonMeshVirtualFixture#compilation)
+- [To run the demo](https://github.com/mli0603/PolygonMeshVirtualFixture#to-run-the-demo)
+- [Log](https://github.com/mli0603/PolygonMeshVirtualFixture#log)
+- [Acknoledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
 ## System Requirement
 We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
 
@@ -80,13 +87,16 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start roscore by `roscore`.
 - Start the simulated console by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json.` Optionally, you can visualize the PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2.`
 - Inform teleoperation logic that PSM is simulated by `rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"`
-- In the console, first setup teleoperation 
-    1. Check `Direct Control`
-    2. Enable `Operator`
-    3. `Home` the robot
-    4. `Start` teleoperation.
 
-       ![](media/dvrk_console_home.png)
+<img src="media/dvrk_console_home.png" align="right" width="108" height="274">
+
+- In the console, first setup teleoperation 
+
+  1. Check `Direct Control`
+  2. Enable `Operator`
+  3. `Home` the robot
+  4. `Start` teleoperation.
+</br></br>
   
 - Move the second joint of MTM such that its value is 20. This step moves the tip above the skull.
   - Enable `Direct Control` in `MTMR` tab.
