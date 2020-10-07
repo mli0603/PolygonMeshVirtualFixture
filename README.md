@@ -87,7 +87,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start the simulated console by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json.` Optionally, you can visualize the PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2.`
 - Inform teleoperation logic that PSM is simulated by `rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"`
 
-<img src="media/dvrk_console_home.png" align="right" width="120" height="308">
+<img src="media/dvrk_console_home.png" align="right">
 
 - In the console, first setup teleoperation 
 
