@@ -61,10 +61,10 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
-![](media/send_transform.png)
+  ![](media/send_transform.png)
 - To control the robot position (blue sphere), drag the red sphere. 
 
-![](media/simple_teleop_demo.gif)
+  ![](media/simple_teleop_demo.gif)
 
 ### dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
@@ -73,7 +73,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
-![](media/send_transform.png)
+  ![](media/send_transform.png)
 
 ### Simulated dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
@@ -108,7 +108,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
     - Now you should see the tool tip is above the skull in 3D Slicer.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
-![](media/send_transform.png)
+  ![](media/send_transform.png)
 - In the console, 
     - Adjust the second joint such that its value is 10
     - Now you should see the tool tip (blue sphere) is stopped at the exterior of the skull in 3D Slicer, while the MTM (red sphere) passes through the skull, demonstrating VF is working.
