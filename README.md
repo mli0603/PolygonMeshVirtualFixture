@@ -79,39 +79,27 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
 - Start roscore by `roscore`.
 - Start the simulated console by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json.` Optionally, you can visualize the PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2.`
-- Emulate operator present by
-  ```
-  rostopic pub -1 /console/emulate_operator_present sensor_msgs/Joy "header:
-    seq: 0
-    stamp:
-      secs: 0
-      nsecs: 0
-    frame_id: ''
-  axes:
-  - 0
-  buttons:
-  - 1" 
-  ```
 - Inform teleoperation logic that PSM is simulated by `rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"`
-- In the console, 
-    - Home the robot.
-      
-      ![](media/dvrk_console_home.png)
-    - Start teleoperation.
+- In the console, first setup teleoperation 
+    1. Check `Direct Control`
+    2. Enable `Operator`
+    3. `Home` the robot
+    4. `Start` teleoperation.
+
+       ![](media/dvrk_console_home.png)
   
-      ![](media/dvrk_console_start_teleop.png)
-    - Enable `Direct control` by checking the box.
-    ![](media/dvrk_console_direct_control.png)
-    - Adjust the second joint such that its value is 20.
-        - NOTE: you have to set it to 10 then 20 to avoid large joint motion.
-    ![](media/dvrk_console_move_joint.gif)
-    - Now you should see the tool tip is above the skull in 3D Slicer.
+- Move the second joint of MTM such that its value is 20. This step moves the tip above the skull.
+  - Enable `Direct Control` in `MTMR` tab.
+  - Change the joint value, click `Move`.
+    - NOTE: you have to set it to 10 then 20 to avoid large joint motion.
+  - Now you should see the tool tip is above the skull in 3D Slicer.
+  ![](media/dvrk_console_move_joint.gif)
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
 
   ![](media/send_transform.png)
 - In the console, 
-    - Adjust the second joint such that its value is 10
-    - Now you should see the tool tip (blue sphere) is stopped at the exterior of the skull in 3D Slicer, while the MTM (red sphere) passes through the skull, demonstrating VF is working.
+  - Adjust the second joint such that its value is 10
+  - Now you should see the tool tip (blue sphere) is stopped at the exterior of the skull in 3D Slicer, while the MTM (red sphere) passes through the skull, demonstrating VF is working.
 
 ## Log
 - 2020.10.06: We have finished upgrading our code to be [crtk](https://collaborative-robotics.github.io/iros-2018-tutorial.html) compatible.
