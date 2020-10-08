@@ -18,7 +18,11 @@ If you find our work relevant, please cite
 - [System Requirement](https://github.com/mli0603/PolygonMeshVirtualFixture#system-requirement)
 - [Dependencies](https://github.com/mli0603/PolygonMeshVirtualFixture#dependencies)
 - [Compilation](https://github.com/mli0603/PolygonMeshVirtualFixture#compilation)
-- [To run the demo](https://github.com/mli0603/PolygonMeshVirtualFixture#to-run-the-demo)
+- [Demo](https://github.com/mli0603/PolygonMeshVirtualFixture#to-run-the-demo)
+  - [Visualization](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization)
+  - [Interactive Demo](https://github.com/mli0603/PolygonMeshVirtualFixture#interactive-demo---simple-teleop)
+  - [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture#dvrk)
+  - [Simulated dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture#simulated-dvrk)
 - [Log](https://github.com/mli0603/PolygonMeshVirtualFixture#log)
 - [Acknowledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
 ## System Requirement
