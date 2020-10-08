@@ -26,7 +26,7 @@ If you find our work relevant, please cite
 - [Log](https://github.com/mli0603/PolygonMeshVirtualFixture#log)
 - [Acknowledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
 ## System Requirement
-We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
+We have tested the code functionality on **Ubuntu 16.04, 18.04 and 20.04**.
 
 ## Dependencies
 - **3D Slicer**: We use 3D Slicer as a front end for visualization. It is required to use 3D Slicer 4.8.1 for OpenIGTLink compatibility. To download, please use this link [here](http://slicer.kitware.com/midas3/download/item/330417/Slicer-4.8.1-linux-amd64.tar.gz) and extract the files. Double click on the executable named `Slicer` to run 3D Slicer.
@@ -34,11 +34,18 @@ We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
     - Note: you will need to `make install` after compiling the code.
     - Note: you will need to install the `SlicerIGT` extension in 3D Slicer. Please see [here](https://www.slicer.org/wiki/Documentation/4.8/SlicerApplication/ExtensionsManager#Installing_an_extension) for how to do so.
 - **ROS**: To install ROS, pleaes follow instruction [here](http://wiki.ros.org/melodic/Installation/Ubuntu)
-- **Third-Party Packages**: Please install by
-  ```sh
-  sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
-  sudo apt install python-wstool python-catkin-tools # catkin and wstool for ROS build
-  ```
+- **Third-Party Packages**:
+  - For Ubuntu 16.04 and 18.04
+    ```sh
+    sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
+    sudo apt install python-wstool python-catkin-tools # catkin and wstool for ROS build
+    ```
+  - For Ubuntu 20.04
+    ```sh
+    sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
+    sudo apt install python3-wstool python3-catkin-tools python3-pip # catkin and wstool for ROS build, pip for python package install
+    pip3 install osrf-pycommon # catkin tool needs osrf
+    ```
 
 ## Compilation
 Please follow the following system command
