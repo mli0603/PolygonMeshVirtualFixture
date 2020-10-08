@@ -1,6 +1,6 @@
 # Anatomical Mesh-Based Virtual Fixtures for Surgical Robots
 
-This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to **automatically generate arbitrary complex virtual fixtures** for any geometries given a polygon mesh (STL) file. The framework is integrated with core CISST-SAW libraries, thus applicable to all CISST-based robots including dVRK and UR. To apply virtual fixture to your robot, there are very few lines needed to change in your control code. This repo contains [an interactive demo](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#interactive-demo---simple-teleop) as well as example code of the virtual fixture working with [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#dvrk).
+This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures for Surgical Robots](https://arxiv.org/abs/2006.02415) accepted in IROS 2020. We present a framework to **automatically generate arbitrary complex virtual fixtures** for any geometries given a polygon mesh (STL) file. The framework is integrated with core CISST-SAW libraries, thus **supports all CISST-based robots with a few lines of change**, including but not limited to dVRK and UR. To apply virtual fixture to your robot, there are very few lines needed to change in your control code. This repo contains [an interactive demo](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#interactive-demo---simple-teleop) as well as example code of the virtual fixture working with [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture/tree/master#dvrk).
 
 > ![](media/demo.gif)
 
@@ -15,12 +15,16 @@ If you find our work relevant, please cite
 }
 ```
 ## Table of Content
-- [System Requirment](https://github.com/mli0603/PolygonMeshVirtualFixture#system-requirement)
+- [System Requirement](https://github.com/mli0603/PolygonMeshVirtualFixture#system-requirement)
 - [Dependencies](https://github.com/mli0603/PolygonMeshVirtualFixture#dependencies)
 - [Compilation](https://github.com/mli0603/PolygonMeshVirtualFixture#compilation)
-- [To run the demo](https://github.com/mli0603/PolygonMeshVirtualFixture#to-run-the-demo)
+- [Demo](https://github.com/mli0603/PolygonMeshVirtualFixture#to-run-the-demo)
+  - [Visualization](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization)
+  - [Interactive Demo](https://github.com/mli0603/PolygonMeshVirtualFixture#interactive-demo---simple-teleop)
+  - [dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture#dvrk)
+  - [Simulated dVRK](https://github.com/mli0603/PolygonMeshVirtualFixture#simulated-dvrk)
 - [Log](https://github.com/mli0603/PolygonMeshVirtualFixture#log)
-- [Acknoledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
+- [Acknowledgement](https://github.com/mli0603/PolygonMeshVirtualFixture#acknowledgement)
 ## System Requirement
 We have tested the code functionality on **Ubuntu 16.04 and 18.04**.
 
