@@ -53,16 +53,31 @@ catkin build # ... and finally compile everything
 
 ## To run the demo
 ### Visualization
-- Launch 3D slicer with the scene file located at `scene/Demo-Scene.mrml`. You should see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). The red sphere represents the servo-ed position (i.e. commanded position from the MTM or mouse) and the blue sphere represents the measured position (i.e. actual position with virtual fixture imposed). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
+- Launch 3D slicer and load the demo scene.
+  - Load the demo scene. Click on `File`, then `Add Data`.
+  > ![](media/slicer_load_scene.png)
+  
+  - Select `Choose File(s) to Add` and select the scene file located at `scene/Demo-Scene.mrml`. 
+  
+  > ![](media/slicer_select_file.png)
+
+  - You should now see a scene with pediatric skull and two spheres (red and blue, but the spheres may overlap in the beginning so you only see one). 
+  - The red sphere represents the servo-ed position (i.e. commanded position from the MTM or mouse) and the blue sphere represents the measured position (i.e. actual position with virtual fixture imposed). If the red sphere enters the skull, blue sphere should be stopped at the exterior shown in the [GIF](https://github.com/mli0603/PolygonMeshVirtualFixture#polygonmeshvirtualfixture).
 
   > ![](media/visualization_slicer.png)
-- Connect to ROS-IGTL-Bridge by navigating to `Modules->IGT->OpenIGTLink IF`. Check `Active` box for status (see figure below). 
+- Connect to IGTL-Bridge.
+  - Navigate to `Modules->IGT->OpenIGTLink IF`. Select the IGTL connector. 
+    
+    > ![](media/slicer_select_connector.png)
 
-  > ![](media/igtl_bridge_activate.png)
+  - Check `Active` box. 
+
+    > ![](media/slicer_activate_connector.png)
 
 ### Interactive Demo - Simple teleop 
 This interactive demo runs a simple teleoperation "robot" where the robot position (blue sphere) is controlled by the red sphere. Drag the red sphere to move the robot around. The robot is subject to the mesh virtual fixture, thus it cannot penatrate the skull.
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
+- Source catkin workspace environment values by `source ~/catkin_ws/devel/setup.bash`
 - Start roscore by `roscore`.
 - Start the demo by `rosrun dvrk_mesh_vf simpleTeleop`.
 - Transform the skull into robot coordinate frame by navigating to `Modules->IGT->OpenIGTLink IF` in 3D Slicer. In `I/O Configuration`, select `Skull to PSM` transformation and click on `Send`.
@@ -74,6 +89,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 
 ### dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
+- Source catkin workspace environment values by `source ~/catkin_ws/devel/setup.bash`
 - Start roscore by `roscore`.
 - Base on the file `share/console-MTMR-PSM2Derived-TeleopDerived.json`, create a configuraiton file that matches your MTMR and PSM2 (or MTML and PSM1) serial number.
 - Launch dVRK by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR-PSM2Derived-TeleopDerived.json`. 
@@ -83,6 +99,7 @@ This interactive demo runs a simple teleoperation "robot" where the robot positi
 
 ### Simulated dVRK
 - Follow [steps for visualization above](https://github.com/mli0603/PolygonMeshVirtualFixture#visualization).
+- Source catkin workspace environment values by `source ~/catkin_ws/devel/setup.bash`
 - Start roscore by `roscore`.
 - Start the simulated console by `rosrun dvrk_robot dvrk_console_json -j share/console-MTMR_KIN_SIMULATED-PSM2Derived_KIN_SIMULATED-TeleopDerived.json.` Optionally, you can visualize the PSM by `roslaunch dvrk_robot dvrk_arm_rviz_only.launch arm:=PSM2.`
 - Inform teleoperation logic that PSM is simulated by `rostopic pub -1 /PSM2/set_simulation std_msgs/Bool "data: true"`
