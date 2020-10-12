@@ -4,6 +4,9 @@ This is the offical repo for our work [Anatomical Mesh-Based Virtual Fixtures fo
 
 > ![](media/demo.gif)
 
+Presentation is available on YouTube:
+
+[![](https://img.youtube.com/vi/eKDoqYajuu4/0.jpg)](https://www.youtube.com/watch?v=eKDoqYajuu4)
 
 If you find our work relevant, please cite
 ```
