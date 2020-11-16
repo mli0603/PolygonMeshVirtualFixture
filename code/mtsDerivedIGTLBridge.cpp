@@ -60,6 +60,8 @@ void mtsDerivedIGTLBridge::Configure(const std::string &filename)
                                    << "<----" << std::endl;
 
 
+        // call base class configure for log configuration
+        mtsComponent::ConfigureJSON(jsonConfig);
 
         Json::Value jsonValue;
         const Json::Value jsonReciever = jsonConfig["receiver"];

@@ -41,18 +41,10 @@
                     "topic_name": "Skull To PSM"
                 }
             ]
-        },
-        {
-            "interface": "requiresPSM2",
-            "topics":
-            [
-                {
-                    "cisst_type": "vct3",
-                    "igtl_type": "igtl::PointMessage",
-                    "mts_function": "DummyReceiver",
-                    "topic_name": "servo_cp"
-                }
-            ]
         }
     ]
+    ,
+    "log": {
+        "allow": "errors"
+    }    
 }
