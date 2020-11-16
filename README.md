@@ -40,14 +40,11 @@ We have tested the code functionality on **Ubuntu 16.04, 18.04 and 20.04**.
 - **Third-Party Packages**:
   - For Ubuntu 16.04 and 18.04
     ```sh
-    sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
-    sudo apt install python-wstool python-catkin-tools # catkin and wstool for ROS build
+    sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev python-wstool python-catkin-tools
     ```
   - For Ubuntu 20.04
     ```sh
-    sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev # most system dependencies we need
-    sudo apt install python3-wstool python3-catkin-tools python3-pip # catkin and wstool for ROS build, pip for python package install
-    pip3 install osrf-pycommon # catkin tool needs osrf
+    sudo apt install libxml2-dev libraw1394-dev libncurses5-dev qtcreator swig sox espeak cmake-curses-gui cmake-qt-gui git subversion gfortran libcppunit-dev libqt5xmlpatterns5-dev python3-wstool python3-catkin-tools python3-osrf-pycommon
     ```
 
 ## Compilation
@@ -58,6 +55,7 @@ mkdir ~/catkin_ws # create the catkin workspace
 cd ~/catkin_ws # go in the workspace
 wstool init src # we're going to use wstool to pull all the code from github
 catkin init
+catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release # all code should be compiled in release mode
 cd src # go in source directory to pull code
 git clone https://github.com/mli0603/PolygonMeshVirtualFixture.git dvrk_mesh_vf # clone the code in a folder called dvrk_mesh_vf
 wstool merge dvrk_mesh_vf/scripts/dvrk_mesh_vf.rosintall # add required repos
