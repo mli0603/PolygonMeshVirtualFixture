@@ -81,7 +81,7 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
                               MTS_OPTIONAL);
 
     // ignore jaw
-    m_ignore_jaw = true;
+    m_jaw.ignore = true;
 
     // lock rotation
     m_rotation_locked = true;

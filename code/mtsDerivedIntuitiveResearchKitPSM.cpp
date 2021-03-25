@@ -185,11 +185,11 @@ void mtsDerivedIntuitiveResearchKitPSM::UpdateOptimizerKinematics()
     mController->SetKinematics(mGoalKinematics);
 }
 
-void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
+void mtsDerivedIntuitiveResearchKitPSM::control_servo_cp()
 {
     // run without constraint motion
     if (!mConstraintMotionEnabled){
-        BaseType::ControlPositionCartesian();
+        BaseType::control_servo_cp();
     }
     // constraint motion
     else{
@@ -202,7 +202,7 @@ void mtsDerivedIntuitiveResearchKitPSM::ControlPositionCartesian()
             nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointInc);
             if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
                 // finally send new joint values
-                SetPositionJointLocal(jointPosition+jointInc.Ref(mNumDof,0));
+                servo_jp_internal(jointPosition+jointInc.Ref(mNumDof,0));
             }
             else{
                 CMN_LOG_CLASS_RUN_ERROR << "Constraint optimization error: No solution found" << std::endl;
@@ -222,7 +222,7 @@ void mtsDerivedIntuitiveResearchKitPSM::GetRobotData()
     // add proxy position update
     if (IsJointReady() && IsCartesianReady() && m_new_pid_goal){
         mProxyCartesianPosition.SetTimestamp(m_kin_measured_js.Timestamp());
-        mProxyCartesianPosition.SetValid(BaseFrameValid);
+        mProxyCartesianPosition.SetValid(m_base_frame_valid);
         mProxyCartesianPosition.Position().From(CartesianSetParam.Goal());
 
         mProxyCaertesianTranslation.Assign(mProxyCartesianPosition.Position().Translation()).Multiply(cmn_m/cmn_mm);

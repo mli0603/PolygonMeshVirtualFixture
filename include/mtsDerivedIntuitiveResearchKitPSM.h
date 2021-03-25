@@ -46,7 +46,7 @@ public:
 
 protected:
     // function override
-    void ControlPositionCartesian() override;
+    void control_servo_cp() override;
     void GetRobotData() override;
 
     // constraint controller
