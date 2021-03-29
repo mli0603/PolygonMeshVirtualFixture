@@ -64,7 +64,7 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
     // Add a required function
     interfacePSM->AddFunction("body/measured_cf",
                               PSMGetWrenchBody);
-    interfacePSM->AddFunction("SetWrenchBodyOrientationAbsolute",
+    interfacePSM->AddFunction("body/set_cf_orientation_absolute",
                               PSMSetWrenchBodyOrientationAbsolute);
     interfacePSM->AddFunction("measured_cv",
                               PSMGetVelocityCartesian);
@@ -81,13 +81,13 @@ void mtsDerivedTeleOperationPSM::Configure(const std::string & CMN_UNUSED(filena
                               MTS_OPTIONAL);
 
     // ignore jaw
-    mIgnoreJaw = true;
+    m_jaw.ignore = true;
 
     // lock rotation
-    mRotationLocked = true;
+    m_rotation_locked = true;
 
     // skip aligning MTM
-    mAlignMTM = false;
+    m_align_mtm = false;
 
     elasticityGain.Assign(1.0,1.0,1.0).Multiply(150.0);
 }
@@ -107,29 +107,29 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
     BaseType::RunEnabled();
 
     // Use proxy location to set haptics feedback; Only if the PSM is following
-    if (mMTM.PositionCartesianCurrent.Valid()
-           && mPSM.PositionCartesianCurrent.Valid())
+    if (mMTM.m_measured_cp.Valid()
+           && mPSM.m_setpoint_cp.Valid())
     {
-        if (!mIsClutched && mIsFollowing){
+        if (!m_clutched && m_following){
             // compute mtm Cartesian motion
-            vctFrm4x4 mtmPosition(mMTM.PositionCartesianCurrent.Position());
+            vctFrm4x4 mtmPosition(mMTM.m_measured_cp.Position());
 
             // translation
             vct3 mtmTranslation;
             vct3 psmTranslation;
-            if (mTranslationLocked) {
+            if (m_translation_locked) {
                 psmTranslation = mPSM.CartesianInitial.Translation();
             } else {
                 mtmTranslation = (mtmPosition.Translation() - mMTM.CartesianInitial.Translation());
-                psmTranslation = mtmTranslation * mScale;
-                psmTranslation = mRegistrationRotation * psmTranslation + mPSM.CartesianInitial.Translation();
+                psmTranslation = mtmTranslation * m_scale;
+                psmTranslation = m_registration_rotation * psmTranslation + mPSM.CartesianInitial.Translation();
             }
             // rotation
             vctMatRot3 psmRotation;
-            if (mRotationLocked) {
+            if (m_rotation_locked) {
                 psmRotation.From(mPSM.CartesianInitial.Rotation());
             } else {
-                psmRotation = mRegistrationRotation * mtmPosition.Rotation() * mAlignOffsetInitial;
+                psmRotation = m_registration_rotation * mtmPosition.Rotation() * m_alignment_offset_initial;
             }
 
             vctFrm4x4 psmCartesianGoal;
@@ -138,7 +138,7 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
 
             // proxy force
             prmPositionCartesianGet psmMeasuredCartesian;
-            mPSM.measured_cp(psmMeasuredCartesian);
+            mPSM.setpoint_cp(psmMeasuredCartesian);
             vct3 diff = psmMeasuredCartesian.Position().Translation() - psmCartesianGoal.Translation();
             vct3 force;
             for (size_t i=0 ; i < 3; i++){
@@ -146,7 +146,7 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
             }
 
             // Re-orient based on rotation between MTM and PSM
-            force = mRegistrationRotation.Inverse() * force;
+            force = m_registration_rotation.Inverse() * force;
             // set force to MTM
             bool psmSimulated;
             PSMGetSimulation(psmSimulated);
