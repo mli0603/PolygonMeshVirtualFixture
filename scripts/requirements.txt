@@ -45,7 +45,7 @@ Pygments==2.5.2
 pyparsing==2.4.6
 python-dateutil==2.8.1
 python-qt-binding==0.4.3
-PyYAML==5.3
+PyYAML==5.4
 qt-dotgraph==0.4.2
 qt-gui==0.4.2
 qt-gui-cpp==0.4.2
