@@ -34,7 +34,7 @@ joint-state-publisher==1.12.15
 kdl-parser-py==1.13.1
 laser-geometry==1.6.5
 message-filters==1.14.9
-numpy==1.18.1
+numpy==1.21.0
 parso==0.6.1
 pexpect==4.8.0
 pickleshare==0.7.5
