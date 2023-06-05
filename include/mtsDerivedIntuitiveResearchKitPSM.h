@@ -47,7 +47,7 @@ public:
 protected:
     // function override
     void control_servo_cp() override;
-    void GetRobotData() override;
+    void get_robot_data() override;
 
     // constraint controller
     mtsVFController *mController;

@@ -61,8 +61,8 @@ if (cisst_FOUND)
 
   # sawIntuitiveResearchKit has been compiled within cisst, we should
   # find it automatically
-  find_package(sawIntuitiveResearchKit 1.7.1 REQUIRED)
-  find_package(sawControllers 1.7.1 REQUIRED)
+  find_package(sawIntuitiveResearchKit REQUIRED)
+  find_package(sawControllers REQUIRED)
   find_package(sawConstraintController REQUIRED)
   find_package(sawOpenIGTLink REQUIRED)
 

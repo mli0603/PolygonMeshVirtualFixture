@@ -122,14 +122,14 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
             } else {
                 mtmTranslation = (mtmPosition.Translation() - mMTM.CartesianInitial.Translation());
                 psmTranslation = mtmTranslation * m_scale;
-                psmTranslation = m_registration_rotation * psmTranslation + mPSM.CartesianInitial.Translation();
+                psmTranslation = psmTranslation + mPSM.CartesianInitial.Translation();
             }
             // rotation
             vctMatRot3 psmRotation;
             if (m_rotation_locked) {
                 psmRotation.From(mPSM.CartesianInitial.Rotation());
             } else {
-                psmRotation = m_registration_rotation * mtmPosition.Rotation() * m_alignment_offset_initial;
+                psmRotation = mtmPosition.Rotation() * m_alignment_offset_initial;
             }
 
             vctFrm4x4 psmCartesianGoal;
@@ -145,15 +145,13 @@ void mtsDerivedTeleOperationPSM::RunEnabled(void)
                 force[i] = elasticityGain[i] * diff[i];
             }
 
-            // Re-orient based on rotation between MTM and PSM
-            force = m_registration_rotation.Inverse() * force;
             // set force to MTM
             bool psmSimulated;
             PSMGetSimulation(psmSimulated);
             if (!psmSimulated){
                 prmForceCartesianSet wrenchMTM;
                 wrenchMTM.Force().Ref<3>(0) = force;
-                mMTM.servo_cf_body(wrenchMTM);
+                mMTM.body_servo_cf(wrenchMTM);
             }
         }
     }

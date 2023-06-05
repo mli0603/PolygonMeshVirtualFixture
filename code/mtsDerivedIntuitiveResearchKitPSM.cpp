@@ -177,7 +177,7 @@ void mtsDerivedIntuitiveResearchKitPSM::UpdateOptimizerKinematics()
     mMeasuredKinematics.Jacobian.Assign(mJacobianBodyBase);
 
     // set goal cartesian position
-    CartesianPositionFrm.From(CartesianSetParam.Goal()); // compute desired arm position
+    CartesianPositionFrm.From(m_servo_cp.Goal()); // compute desired arm position
     mGoalKinematics.Frame.Assign(vctFrm3(CartesianPositionFrm));
 
     // update controller stored kinematics
@@ -193,7 +193,7 @@ void mtsDerivedIntuitiveResearchKitPSM::control_servo_cp()
     }
     // constraint motion
     else{
-        if (m_new_pid_goal) {
+        if (m_pid_new_goal) {
             // copy current position
             vctDoubleVec jointPosition(m_kin_measured_js.Position());
 
@@ -202,7 +202,7 @@ void mtsDerivedIntuitiveResearchKitPSM::control_servo_cp()
             nmrConstraintOptimizer::STATUS optimizerStatus = Solve(jointInc);
             if (optimizerStatus == nmrConstraintOptimizer::STATUS::NMR_OK){
                 // finally send new joint values
-                servo_jp_internal(jointPosition+jointInc.Ref(mNumDof,0));
+                servo_jp_internal(jointPosition+jointInc.Ref(mNumDof, 0), vctDoubleVec());
             }
             else{
                 CMN_LOG_CLASS_RUN_ERROR << "Constraint optimization error: No solution found" << std::endl;
@@ -210,20 +210,20 @@ void mtsDerivedIntuitiveResearchKitPSM::control_servo_cp()
             }
 
             // reset flag
-            m_new_pid_goal = false;
+            m_pid_new_goal = false;
         }
     }
 }
 
-void mtsDerivedIntuitiveResearchKitPSM::GetRobotData()
+void mtsDerivedIntuitiveResearchKitPSM::get_robot_data()
 {
-    BaseType::GetRobotData();
+    BaseType::get_robot_data();
 
     // add proxy position update
-    if (IsJointReady() && IsCartesianReady() && m_new_pid_goal){
+    if (is_joint_ready() && is_cartesian_ready() && m_pid_new_goal){
         mProxyCartesianPosition.SetTimestamp(m_kin_measured_js.Timestamp());
         mProxyCartesianPosition.SetValid(m_base_frame_valid);
-        mProxyCartesianPosition.Position().From(CartesianSetParam.Goal());
+        mProxyCartesianPosition.Position().From(m_servo_cp.Goal());
 
         mProxyCaertesianTranslation.Assign(mProxyCartesianPosition.Position().Translation()).Multiply(cmn_m/cmn_mm);
     }
@@ -306,7 +306,7 @@ void mtsDerivedIntuitiveResearchKitPSM::GetSimulation(bool &status) const
     status = mSimulated;
 }
 
-void mtsDerivedIntuitiveResearchKitPSM::DummyReceiver(const vct3 &dummy)
+void mtsDerivedIntuitiveResearchKitPSM::DummyReceiver(const vct3 &)
 {
 
 }
